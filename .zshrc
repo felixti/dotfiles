@@ -1,41 +1,45 @@
-# DOTNET CORE
-export PATH=$PATH:$HOME/dotnet
-export DOTNET_ROOT=$HOME/dotnet 
-export PATH="$PATH:/home/felix/.dotnet/tools"
-export MSBuildSDKsPath=$HOME/dotnet/sdk/$(dotnet --version)/Sdks
-export PATH=$PATH:$HOME/.linkerd2/bin
-export PATH=$PATH:$HOME/Android/Sdk/platform-tools
-
-alias pbcopy="xclip -sel clip"
-alias explorer="dde-file-manager"
-alias k="kubectl"
-alias az-devops-current-iteration="az boards query --id 74fc54c6-aa91-43be-af41-b9c905242d05 -o table"
-
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/Users/felix/.zsh/completions:"* ]]; then export FPATH="/Users/felix/.zsh/completions:$FPATH"; fi
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+export DOTNET_ROOT="/usr/local/share/dotnet"
+export PATH=/opt/homebrew/bin:$PATH
+export PATH="$HOME/.tmuxifier/bin:$PATH"
+export PATH="/Users/felix/.dotnet/tools":$PATH
+export PATH=$DOTNET_ROOT:$PATH
+. "/Users/felix/.deno/env"
+. "$HOME/.cargo/env"
 
-export SOURCEKIT_TOOLCHAIN_PATH=/usr/lib64/swift
+# bun completions
+[ -s "/Users/felix/.bun/_bun" ] && source "/Users/felix/.bun/_bun"
+ 
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+alias k="kubectl"
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/felix/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
+
+eval "$(fnm env --use-on-cd)"
+
+# oh-my-posh
+# eval "$(oh-my-posh init zsh --config ~/.M365Princess.omp.json)"
+#
+# if [ $TERM_PROGRAM != "Apple_Terminal" ]; then
+#   eval "$(oh-my-posh init zsh)"
+# fi
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="spaceship"
-#ZSH_THEME="powerlevel9k/powerlevel9k"
-# POWERLEVEL9K_MODE='awesome-fontconfig'
-# POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
-# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir newline vcs)
-# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(command_execution_time status root_indicator node_version time)
-# POWERLEVEL9K_HOME_SUB_ICON="\uf115 "
-# POWERLEVEL9K_VCS_UNTRACKED_ICON="\uf059 "
-# POWERLEVEL9K_VCS_UNSTAGED_ICON="\uf055 "
-# POWERLEVEL9K_VCS_STAGED_ICON="\uf067 "
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+#ZSH_THEME="robbyrussell"
+
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
+# a theme from this variable instead of looking in $ZSH/themes/
 # If set to an empty array, this variable will have no effect.
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
@@ -46,11 +50,16 @@ ZSH_THEME="spaceship"
 # Case-sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+# zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+# zstyle ':omz:update' frequency 13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -62,6 +71,9 @@ ZSH_THEME="spaceship"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
@@ -81,15 +93,17 @@ ZSH_THEME="spaceship"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
 # Which plugins would you like to load?
-# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(
+  zsh-syntax-highlighting
+  zsh-autosuggestions
+  zsh-completions
+  )
 
-# source /usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme
-# source $ZSH/oh-my-zsh.sh
-
+source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
@@ -108,9 +122,6 @@ plugins=(git)
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-# ssh
-# export SSH_KEY_PATH="~/.ssh/rsa_id"
-
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -119,43 +130,82 @@ plugins=(git)
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-source /usr/share/nvm/init-nvm.sh
 
-export EDITOR=/usr/bin/vim
+# . /opt/homebrew/opt/asdf/libexec/asdf.sh
 
+alias reload-zsh="source ~/.zshrc"
+alias edit-zsh="nvim ~/.zshrc"
 
-SPACESHIP_PROMPT_ORDER=(
-	user
-	dir
-	host
-	node
-	dotnet
-	php
-	git
-	exec_time
-	line_sep
-	vi_mode
-	jobs
-	exit_code
-	char 
-)
+eval "$(tmuxifier init -)"
+eval "$(starship init zsh)"
 
-SPACESHIP_PROMPT_ADD_NEWLINE=false
+eval "$(fzf --zsh)"
 
-source $ZSH/oh-my-zsh.sh
+# --- setup fzf theme ---
+fg="#CBE0F0"
+bg="#011628"
+bg_highlight="#143653"
+purple="#B388FF"
+blue="#06BCE4"
+cyan="#2CF9ED"
 
-### Added by Zplugin's installer
-source '/home/felix/.zplugin/bin/zplugin.zsh'
-autoload -Uz _zplugin
-(( ${+_comps} )) && _comps[zplugin]=_zplugin
-### End of Zplugin's installer chunk
+export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
 
-zplugin light zsh-users/zsh-autosuggestions
-zplugin light zsh-users/zsh-completions
-zplugin light zdharma/fast-syntax-highlighting
+# -- Use fd instead of fzf --
 
-export PATH=$PATH:/home/felix/bin
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type d --hidden --strip-cwd-prefix --exclude .git"
 
-source '/home/felix/lib/azure-cli/az.completion'
+_fzf_compgen_path() {
+  fd --hidden --exclude .git . "$1"
+}
 
-neofetch
+_fzf_compgen_dir() {
+  fd --type d --hidden --exclude .git . "$1"
+}
+
+source ~/fzf-git.sh/fzf-git.sh
+
+show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+
+export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview'"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
+
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+    export|unset) fzf --preview "eval 'echo \${}'"         "$@" ;;
+    ssh)          fzf --preview 'dig {}'                   "$@" ;;
+    *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
+  esac
+}
+
+export BAT_THEME="tokyonight_night"
+
+# ---- Eza (better ls) -----
+
+alias ls="eza --icons=always"
+
+# ---- TheFuck -----
+
+# thefuck alias
+eval $(thefuck --alias)
+eval $(thefuck --alias fk)
+
+# ---- Zoxide (better cd) ----
+eval "$(zoxide init zsh)"
+
+alias cd="z"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
