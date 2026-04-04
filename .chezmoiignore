@@ -1,0 +1,28 @@
+# Meta files — not applied to $HOME
+# (chezmoi matches TARGET paths, i.e. relative to $HOME, not source paths)
+docs
+secrets.example.toml
+README.md
+
+# DE: GNOME-specific configs
+{{ if ne .de "gnome" }}
+.config/pop-shell
+.config/gtk-3.0
+.config/gtk-4.0
+.config/org.gnome.Ptyxis
+{{ end }}
+
+# DE: Hyprland-specific configs
+{{ if ne .de "hyprland" }}
+.config/hypr
+.config/waybar
+.config/rofi
+.config/dunst
+.config/hyprlock
+{{ end }}
+
+# DE: KDE-specific configs
+{{ if ne .de "kde" }}
+.config/kdeglobals
+.config/kwinrc
+{{ end }}
