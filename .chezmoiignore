@@ -6,6 +6,7 @@ README.md
 
 # DE: GNOME-specific configs
 {{ if ne .de "gnome" }}
+.config/dconf
 .config/pop-shell
 .config/gtk-3.0
 .config/gtk-4.0
