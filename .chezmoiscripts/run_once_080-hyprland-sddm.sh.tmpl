@@ -1,0 +1,32 @@
+#!/bin/bash
+{{ if ne .de "hyprland" }}exit 0{{ end }}
+{{ if eq .chezmoi.os "darwin" }}exit 0{{ end }}
+# Install SDDM with HyDE greeter for Hyprland
+set -e
+
+echo "Installing SDDM + HyDE greeter..."
+
+{{- if eq .flavor "arch" }}
+sudo pacman -S --noconfirm sddm
+{{- else if eq .flavor "fedora-atomic" }}
+sudo rpm-ostree install sddm
+{{- end }}
+
+# Clone and install HyDE sddm theme
+SDDM_DIR="/tmp/sddm-hyprland"
+rm -rf "$SDDM_DIR"
+git clone --depth=1 https://github.com/HyDE-Project/sddm-hyprland "$SDDM_DIR"
+
+# Install theme system-wide
+sudo cp -r "$SDDM_DIR/themes/"* /usr/share/sddm/themes/
+
+# Configure SDDM to use hyprland theme
+sudo mkdir -p /etc/sddm.conf.d
+echo -e "[Theme]\nCurrent=hyprland" | sudo tee /etc/sddm.conf.d/10-hyprland.conf
+
+# Enable SDDM
+sudo systemctl enable sddm
+
+echo "✓ SDDM + HyDE greeter installed"
+echo "  Reboot to use the new login screen"
+echo "  To revert: sudo systemctl disable sddm && sudo systemctl enable gdm"
