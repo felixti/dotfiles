@@ -1,0 +1,25 @@
+#!/bin/bash
+{{ if ne .flavor "arch" }}exit 0{{ end }}
+# Install core packages on Arch/CachyOS
+set -e
+
+PACMAN_PKGS=(
+    git curl wget unzip zip
+    zsh tmux neovim
+    base-devel cmake
+    openssh
+    tailscale
+)
+sudo pacman -S --needed --noconfirm "${PACMAN_PKGS[@]}"
+
+AUR_PKGS=(
+    antidote
+    zoxide
+    starship
+    btop
+)
+paru -S --needed --noconfirm "${AUR_PKGS[@]}"
+
+sudo systemctl enable --now tailscaled
+
+echo "✓ Arch packages installed"

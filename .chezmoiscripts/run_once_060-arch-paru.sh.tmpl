@@ -1,0 +1,13 @@
+#!/bin/bash
+{{ if ne .flavor "arch" }}exit 0{{ end }}
+# Install paru AUR helper (works for Arch Linux and CachyOS)
+set -e
+
+command -v paru &>/dev/null && exit 0
+
+echo "Installing paru AUR helper..."
+sudo pacman -S --needed --noconfirm git base-devel
+git clone https://aur.archlinux.org/paru.git /tmp/paru-build
+cd /tmp/paru-build && makepkg -si --noconfirm
+rm -rf /tmp/paru-build
+echo "✓ paru installed"
