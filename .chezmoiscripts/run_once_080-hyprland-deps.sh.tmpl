@@ -1,23 +1,55 @@
 #!/bin/bash
 {{ if ne .de "hyprland" }}exit 0{{ end }}
+{{ if eq .chezmoi.os "darwin" }}exit 0{{ end }}
 # Install Hyprland ecosystem dependencies
 set -e
 
 {{- if eq .flavor "arch" }}
-paru -S --needed --noconfirm \
-    waybar \
-    rofi-wayland \
-    dunst \
-    hyprlock \
-    swayidle \
-    hyprpaper \
-    swaync \
-    clipse
+# Base hyprland from main repo
+sudo pacman -S --noconfirm hyprland
+
+# CachyOS extras (guard on presence of /etc/cachyos-release)
+if [ -f /etc/cachyos-release ]; then
+    sudo pacman -S --noconfirm hyprland-qtutils hyprlock hypridle hyprpicker hyprsunset hyprcursor 2>/dev/null || true
+fi
+
+# AUR via paru
+paru -S --noconfirm waybar rofi-wayland dunst swww wlogout brightnessctl ddcutil blueman
+
+{{- else if eq .flavor "fedora-atomic" }}
+sudo rpm-ostree install sddm
+sudo rpm-ostree install hyprland
+sudo dnf copr enable -y solopasha/hyprland
+sudo dnf install -y hyprland hyprpaper hyprlock hypridle hyprpicker waybar rofi dunst swww wlogout brightnessctl ddcutil blueman
+
+{{- else if eq .flavor "fedora" }}
+sudo dnf copr enable -y solopasha/hyprland
+sudo dnf install -y hyprland hyprpaper hyprlock hypridle hyprpicker waybar rofi dunst swww wlogout brightnessctl ddcutil blueman
+
 {{- else if eq .flavor "debian" }}
-sudo apt install -y \
-    waybar \
-    rofi \
-    dunst
+# Build deps
+sudo apt install -y build-essential cmake meson ninja-build git \
+    libwayland-dev libxkbcommon-dev libdisplay-dev libliftoff-dev \
+    libinput-dev libhyprutils-dev libegl-dev libgl-dev libgles-dev \
+    libpixman-1-dev pkg-config wayland-protocols libwlroots-dev
+
+# Clone and build Hyprland from source
+HYPRLAND_SRC="/tmp/hyprland"
+rm -rf "$HYPRLAND_SRC"
+git clone --depth=1 --branch v0.54.1 https://github.com/hyprwm/hyprland "$HYPRLAND_SRC"
+cd "$HYPRLAND_SRC"
+meson setup build -Dprefix=/usr/local
+ninja -C build
+sudo ninja -C build install
+sudo ldconfig
+
+# Install tools (swww needs source build too, skip for now)
+sudo apt install -y waybar rofi dunst wlogout brightnessctl ddcutil blueman
+# swww on Debian: install from source
+cd /tmp && rm -rf swww
+git clone --depth=1 https://github.com/LBCrion/swww
+cd swww && meson setup build -Dprefix=/usr/local && ninja -C build && sudo ninja -C build install
+
 {{- else }}
 echo "Hyprland deps: unsupported flavor '{{ .flavor }}' — install manually"
 {{- end }}
