@@ -83,3 +83,7 @@ dot_config/hypr/         # Hyprland
 - `~/.ssh/` — SSH keys
 - `~/.claude.json` — session metadata (rendered from template at apply time)
 - `~/.zsh_history` — personal shell history
+
+## Platform notes
+
+See [docs/PLATFORMS.md](docs/PLATFORMS.md) for per-distro hints on GPU setup, package manager caveats, and DE-specific configuration for GNOME, KDE, and Hyprland.
