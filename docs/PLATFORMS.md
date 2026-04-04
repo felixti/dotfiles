@@ -259,26 +259,25 @@ GTK app theme is then set via **System Settings → Application Style → GNOME 
 
 ## Desktop Environment: Hyprland
 
-**Tracked configs:**
-- `hypr/hyprland.conf` — main Hyprland config
-- `waybar/` — status bar
-- `rofi/` — app launcher
-- `dunst/` — notifications
-- `hyprlock/` — lock screen
+**Install methods per distro:**
+
+| Flavor | Command |
+|---|---|
+| Arch/CachyOS | `pacman -S hyprland` (+ CachyOS extras: hyprland-qtutils, hyprlock, hypridle, hyprpicker, hyprsunset, hyprcursor) |
+| Fedora Atomic | `sudo rpm-ostree install sddm hyprland && sudo dnf copr enable solopasha/hyprland` |
+| Fedora (non-Atomic) | `sudo dnf copr enable solopasha/hyprland && sudo dnf install hyprland` |
+| Debian/Ubuntu | Source build: build deps → git clone v0.54.1 → meson build → ninja install |
+
+**Tracked configs:** `hypr/`, `waybar/`, `wofi/`
 
 **Scripts:**
-- `run_once_080-hyprland-deps.sh.tmpl` — install waybar, rofi, dunst, hyprlock
+- `run_once_080-hyprland-deps.sh.tmpl` — install all Hyprland ecosystem deps per distro
+- `run_once_080-hyprland-sddm.sh.tmpl` — SDDM + HyDE greeter for Arch and Fedora
 
-### Hyprland on CachyOS
-
-CachyOS January 2026 ships with **Wayland by default**. Hyprland works well on CachyOS — it's a natural fit since CachyOS is already Wayland-first.
-
-### Hyprland GPU: AMD
-
-```bash
-# Arch/CachyOS
-paru -S --noconfirm rocm-opencl-runtime
-```
+**References:**
+- [HyDE-Project/HyDE](https://github.com/HyDE-Project/HyDE)
+- [HyDE sddm-hyprland](https://github.com/HyDE-Project/sddm-hyprland)
+- [hyprpaper-unsplash wallpaper fetcher](https://github.com/qwertzui11/hyprpaper-wallpaper-fetcher)
 
 ---
 
