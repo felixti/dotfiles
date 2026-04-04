@@ -14,17 +14,17 @@ if [ -f /etc/cachyos-release ]; then
 fi
 
 # AUR via paru
-paru -S --noconfirm waybar rofi-wayland dunst swww wlogout brightnessctl ddcutil blueman
+paru -S --noconfirm waybar rofi-wayland dunst swww wlogout brightnessctl ddcutil blueman nemo nemo-preview nemo-fileroller
 
 {{- else if eq .flavor "fedora-atomic" }}
 sudo rpm-ostree install sddm
 sudo rpm-ostree install hyprland
 sudo dnf copr enable -y solopasha/hyprland
-sudo dnf install -y hyprland hyprpaper hyprlock hypridle hyprpicker waybar rofi dunst swww wlogout brightnessctl ddcutil blueman
+sudo dnf install -y hyprland hyprpaper hyprlock hypridle hyprpicker waybar rofi dunst swww wlogout brightnessctl ddcutil blueman nemo nemo-preview
 
 {{- else if eq .flavor "fedora" }}
 sudo dnf copr enable -y solopasha/hyprland
-sudo dnf install -y hyprland hyprpaper hyprlock hypridle hyprpicker waybar rofi dunst swww wlogout brightnessctl ddcutil blueman
+sudo dnf install -y hyprland hyprpaper hyprlock hypridle hyprpicker waybar rofi dunst swww wlogout brightnessctl ddcutil blueman nemo nemo-preview
 
 {{- else if eq .flavor "debian" }}
 # Build deps
@@ -45,6 +45,7 @@ sudo ldconfig
 
 # Install tools (swww needs source build too, skip for now)
 sudo apt install -y waybar rofi dunst wlogout brightnessctl ddcutil blueman
+sudo apt install -y nemo nemo-preview fileroller
 # swww on Debian: install from source
 cd /tmp && rm -rf swww
 git clone --depth=1 https://github.com/LBCrion/swww
