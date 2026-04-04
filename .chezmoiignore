@@ -23,6 +23,8 @@ README.md
 
 # DE: KDE-specific configs
 {{ if ne .de "kde" }}
-.config/kdeglobals
+.config/kde
 .config/kwinrc
+.config/kwinrulesrc
+.config/plasmarc
 {{ end }}
