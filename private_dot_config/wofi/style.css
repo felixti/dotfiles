@@ -1,0 +1,80 @@
+window {
+    background-color: rgba(30, 30, 46, 0.95);
+    border: 1px solid rgba(69, 71, 90, 0.8);
+    border-radius: 12px;
+    font-family: "JetBrains Mono", "SF Pro Display", "Cantarell", sans-serif;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+#input {
+    background: rgba(49, 50, 68, 0.6);
+    border: none;
+    border-bottom: 1px solid rgba(69, 71, 90, 0.6);
+    border-radius: 0;
+    color: #cdd6f4;
+    margin: 8px 12px;
+    padding: 10px 14px;
+    font-size: 15px;
+}
+
+#input:focus {
+    border-bottom: 2px solid #cba6f7;
+    outline: none;
+}
+
+#input > * {
+    color: #cdd6f4;
+}
+
+#inner-box {
+    background: transparent;
+    border: none;
+    margin: 8px 0;
+    padding: 4px 8px;
+}
+
+#outer-box {
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+#scroll {
+    margin: 0;
+    padding: 0 8px;
+}
+
+#text {
+    color: #cdd6f4;
+    text-shadow: none;
+}
+
+#entry {
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 2px 4px;
+}
+
+#entry:selected {
+    background: rgba(203, 166, 247, 0.25);
+    border: 1px solid rgba(203, 166, 247, 0.4);
+}
+
+#entry:hover {
+    background: rgba(205, 202, 230, 0.12);
+}
+
+#text:selected {
+    color: #f5e0dc;
+}
+
+#image {
+    margin-right: 10px;
+    border-radius: 4px;
+}
