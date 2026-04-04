@@ -1,0 +1,15 @@
+#!/bin/bash
+{{ if ne .de "gnome" }}exit 0{{ end }}
+# Restore GNOME dconf settings from tracked settings.ini
+set -e
+
+SETTINGS="$HOME/.config/dconf/settings.ini"
+if [ ! -f "$SETTINGS" ]; then
+    echo "dconf settings.ini not found at $SETTINGS — skipping"
+    exit 0
+fi
+
+echo "Loading dconf settings..."
+dconf load / < "$SETTINGS"
+echo "✓ dconf settings restored"
+echo "  Note: Log out and back in for all settings to take effect"
