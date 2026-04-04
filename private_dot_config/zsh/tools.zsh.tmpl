@@ -1,0 +1,48 @@
+# ============================================
+# TOOL INITIALIZATIONS
+# ============================================
+
+# Starship prompt (must be last for prompt customization)
+if command -v starship &>/dev/null; then
+    eval "$(starship init zsh)"
+fi
+
+# zoxide (smart cd)
+if command -v zoxide &>/dev/null; then
+    eval "$(zoxide init zsh)"
+fi
+
+# fzf
+if command -v fzf &>/dev/null; then
+    eval "$(fzf --zsh)"
+fi
+
+# thefuck
+if command -v thefuck &>/dev/null; then
+    eval "$(thefuck --alias)"
+fi
+
+# television shell integration
+if command -v tv &>/dev/null; then
+    eval "$(tv init zsh)"
+fi
+
+# ============================================
+# AUTO-START SERVICES
+# ============================================
+
+# Tailscale (Linux only — macOS uses launchd)
+{{- if ne .chezmoi.os "darwin" }}
+if command -v tailscaled &>/dev/null; then
+    pgrep -x tailscaled >/dev/null || sudo systemctl start tailscaled 2>/dev/null || true
+fi
+{{- end }}
+
+# ============================================
+# SSH AGENT (headless / server machines)
+# ============================================
+{{- if eq .de "none" }}
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    eval "$(ssh-agent -s)" > /dev/null
+fi
+{{- end }}
