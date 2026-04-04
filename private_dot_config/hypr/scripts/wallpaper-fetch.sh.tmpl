@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Fetch a random wallpaper from Unsplash and set it via swww
+# Requires: unsplashApiKey in ~/.config/chezmoi/chezmoi.toml
+set -e
+
+WALLPAPER_DIR="$HOME/.wallpaper"
+WALLPAPER="$WALLPAPER_DIR/current.jpg"
+mkdir -p "$WALLPAPER_DIR"
+
+{{ if .unsplashApiKey }}
+QUERY="nature,dark,minimal,landscape"
+URL="https://api.unsplash.com/photos/random?query=$QUERY&orientation=landscape&content_filter=high"
+
+echo "Fetching wallpaper from Unsplash..."
+RESPONSE=$(curl -sSL -H "Authorization: Client-ID {{ .unsplashApiKey }}" \
+    -G "$URL")
+
+IMAGE_URL=$(echo "$RESPONSE" | jq -r '.urls.raw // empty')
+if [ -z "$IMAGE_URL" ] || [ "$IMAGE_URL" = "null" ]; then
+    echo "Failed to fetch wallpaper — check your Unsplash API key"
+    echo "Response: $RESPONSE"
+    exit 1
+fi
+
+# Add size params
+IMAGE_URL="${IMAGE_URL}&w=2560&q=80&fit=crop"
+
+curl -sL "$IMAGE_URL" -o "$WALLPAPER"
+echo "Wallpaper saved to $WALLPAPER"
+
+# Set via swww
+if command -v swww &>/dev/null; then
+    swww img "$WALLPAPER" --transition-type random --transition-duration 2
+else
+    echo "swww not installed — wallpaper saved but not applied"
+fi
+{{ else }}
+echo "No unsplashApiKey configured — skipping wallpaper fetch"
+echo "Add unsplashApiKey to ~/.config/chezmoi/chezmoi.toml to enable"
+exit 0
+{{ end }}

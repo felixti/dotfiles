@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Cycle through available HyDE themes
+# Currently ships with mocha.conf only — future-proof for adding more
+set -e
+
+THEMES_DIR="$HOME/.config/hypr/themes"
+CONFIG="$HOME/.config/hypr/hyprland.conf"
+
+if [ ! -f "$CONFIG" ]; then
+    echo "hyprland.conf not found — is Hyprland configured?"
+    exit 1
+fi
+
+AVAILABLE=$(find "$THEMES_DIR" -maxdepth 1 -name "*.conf" | sort)
+COUNT=$(echo "$AVAILABLE" | wc -l)
+
+if [ "$COUNT" -eq 0 ]; then
+    echo "No themes found in $THEMES_DIR"
+    exit 1
+fi
+
+if [ "$COUNT" -eq 1 ]; then
+    echo "Only one theme available ($(basename $AVAILABLE)) — no cycling needed"
+    # Still reload to ensure current theme is active
+    hyprctl reload
+    exit 0
+fi
+
+# Find current theme
+CURRENT=$(grep "^source.*themes/" "$CONFIG" | head -1 | sed 's|source.*themes/||;s|\.conf.*||')
+CURRENT="$THEMES_DIR/$CURRENT.conf"
+
+# Cycle to next
+FOUND=0
+PREV=""
+for theme in $AVAILABLE; do
+    if [ "$FOUND" -eq 1 ]; then
+        NEW="$theme"
+        FOUND=2
+        break
+    fi
+    if [ "$theme" = "$CURRENT" ]; then
+        FOUND=1
+    fi
+    PREV="$theme"
+done
+
+# Wrap around
+if [ "$FOUND" -ne 2 ]; then
+    NEW="$PREV"
+fi
+
+NEW_NAME=$(basename "$NEW" .conf)
+echo "Switching to theme: $NEW_NAME"
+
+sed -i "s|source = .*themes/.*.conf.*|source = $NEW|" "$CONFIG"
+hyprctl reload
+echo "✓ Theme switched to $NEW_NAME"
