@@ -1,0 +1,14 @@
+#!/bin/bash
+{{ if ne .de "kde" }}exit 0{{ end }}
+# Install Catppuccin Mocha theme for KDE Plasma
+set -e
+
+echo "Installing Catppuccin Mocha for KDE..."
+
+{{- if eq .flavor "arch" }}
+paru -S --needed --noconfirm catppuccin-gtk-theme-mocha kvantum-theme-catppuccin-git
+{{- else if eq .flavor "fedora-atomic" }}
+flatpak install -y flathub org.kde.KStyle.Kvantum
+{{- end }}
+
+echo "✓ KDE Catppuccin installed — apply via System Settings > Appearance"

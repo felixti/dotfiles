@@ -1,0 +1,25 @@
+#!/bin/bash
+{{ if ne .de "hyprland" }}exit 0{{ end }}
+# Install Hyprland ecosystem dependencies
+set -e
+
+{{- if eq .flavor "arch" }}
+paru -S --needed --noconfirm \
+    waybar \
+    rofi-wayland \
+    dunst \
+    hyprlock \
+    swayidle \
+    hyprpaper \
+    swaync \
+    clipse
+{{- else if eq .flavor "debian" }}
+sudo apt install -y \
+    waybar \
+    rofi \
+    dunst
+{{- else }}
+echo "Hyprland deps: unsupported flavor '{{ .flavor }}' — install manually"
+{{- end }}
+
+echo "✓ Hyprland dependencies installed"
