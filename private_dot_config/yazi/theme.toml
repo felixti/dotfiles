@@ -1,0 +1,105 @@
+# Yazi Theme - Catppuccin Mocha
+# A soothing pastel theme for the file manager
+
+[manager]
+# Background
+cwd = { fg = "#cba6f7" }  # Mauve
+
+# Border
+border = { fg = "#6c7086" }  # Overlay0
+border_style = { fg = "#89b4fa" }  # Blue
+
+# Highlight
+highlighted = { fg = "#1e1e2e", bg = "#89b4fa" }  # Blue on base
+
+# Selection
+selected = { fg = "#cdd6f4", bg = "#45475a" }  # Text on surface1
+
+# File types
+file = { fg = "#cdd6f4" }  # Text
+directory = { fg = "#89b4fa" }  # Blue
+symlink = { fg = "#f5c2e7" }  # Pink
+executable = { fg = "#a6e3a1" }  # Green
+hidden = { fg = "#6c7086" }  # Overlay0
+
+# Size indicators
+size = { fg = "#fab387" }  # Peach
+size_hidden = { fg = "#6c7086" }  # Overlay0
+
+# Permissions
+perm = { fg = "#9399b2" }  # Overlay2
+perm_exec = { fg = "#a6e3a1" }  # Green
+perm_read = { fg = "#fab387" }  # Peach
+perm_write = { fg = "#f38ba8" }  # Red
+
+# Time
+date = { fg = "#b4befe" }  # Lavender
+time = { fg = "#6c7086" }  # Overlay0
+
+[preview]
+# Preview window
+border = { fg = "#6c7086" }  # Overlay0
+title = { fg = "#cba6f7" }  # Mauve
+
+# Code highlighting
+highlight = { fg = "#cdd6f4" }  # Text
+
+[status]
+# Status bar
+separator = { fg = "#6c7086" }  # Overlay0
+
+# Mode indicators
+mode_normal = { fg = "#1e1e2e", bg = "#89b4fa" }  # Blue
+mode_select = { fg = "#1e1e2e", bg = "#a6e3a1" }  # Green
+mode_unset = { fg = "#1e1e2e", bg = "#f38ba8" }  # Red
+
+# Progress bar
+progress_normal = { fg = "#89b4fa", bg = "#313244" }  # Blue on surface0
+progress_selected = { fg = "#cba6f7", bg = "#313244" }  # Mauve on surface0
+
+# Permissions
+permissions_t = { fg = "#89b4fa" }  # Blue
+permissions_r = { fg = "#fab387" }  # Peach
+permissions_w = { fg = "#f38ba8" }  # Red
+permissions_x = { fg = "#a6e3a1" }  # Green
+permissions_s = { fg = "#f5c2e7" }  # Pink
+
+[input]
+# Input box
+border = { fg = "#89b4fa" }  # Blue
+title = { fg = "#cba6f7" }  # Mauve
+value = { fg = "#cdd6f4" }  # Text
+selected = { bg = "#45475a" }  # Surface1
+
+[select]
+# Selection dialogs
+border = { fg = "#89b4fa" }  # Blue
+title = { fg = "#cba6f7" }  # Mauve
+active = { fg = "#89b4fa" }  # Blue
+inactive = { fg = "#6c7086" }  # Overlay0
+
+[tasks]
+# Tasks window
+border = { fg = "#89b4fa" }  # Blue
+title = { fg = "#cba6f7" }  # Mauve
+hovered = { fg = "#1e1e2e", bg = "#89b4fa" }  # Blue on base
+
+[which]
+# Key hint window
+mask = { bg = "#181825" }  # Mantle
+cand = { fg = "#89b4fa" }  # Blue
+desc = { fg = "#cdd6f4" }  # Text
+
+[help]
+# Help window
+on = { fg = "#f5c2e7" }  # Pink
+run = { fg = "#cba6f7" }  # Mauve
+desc = { fg = "#cdd6f4" }  # Text
+hovered = { bg = "#45475a", bold = true }  # Surface1
+footer = { fg = "#6c7086", bg = "#181825" }  # Overlay0 on Mantle
+
+[notification]
+# Notifications
+title_info = { fg = "#89b4fa" }  # Blue
+title_warn = { fg = "#fab387" }  # Peach
+title_error = { fg = "#f38ba8" }  # Red

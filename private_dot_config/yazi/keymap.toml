@@ -1,0 +1,254 @@
+# Yazi Keybindings - Vim Style
+
+# ============================================
+# MANAGER (Navigation)
+# ============================================
+[[manager.prepend_keymap]]
+# Navigation - Vim style
+on = ["j"]
+run = "arrow 1"
+desc = "Move down"
+
+[[manager.prepend_keymap]]
+on = ["k"]
+run = "arrow -1"
+desc = "Move up"
+
+[[manager.prepend_keymap]]
+on = ["h"]
+run = "leave"
+desc = "Go to parent directory"
+
+[[manager.prepend_keymap]]
+on = ["l"]
+run = "enter"
+desc = "Enter directory / Open file"
+
+[[manager.prepend_keymap]]
+on = ["g", "g"]
+run = "arrow -99999999"
+desc = "Go to top"
+
+[[manager.prepend_keymap]]
+on = ["G"]
+run = "arrow 99999999"
+desc = "Go to bottom"
+
+# ============================================
+# QUICK NAVIGATION
+# ============================================
+[[manager.prepend_keymap]]
+on = ["g", "c"]
+run = "cd ~/.config"
+desc = "Go to config directory"
+
+[[manager.prepend_keymap]]
+on = ["g", "p"]
+run = "cd ~/powerhouse/projects"
+desc = "Go to projects directory"
+
+[[manager.prepend_keymap]]
+on = ["g", "d"]
+run = "cd ~/Downloads"
+desc = "Go to Downloads"
+
+[[manager.prepend_keymap]]
+on = ["g", "D"]
+run = "cd ~/Documents"
+desc = "Go to Documents"
+
+[[manager.prepend_keymap]]
+on = ["g", "h"]
+run = "cd ~"
+desc = "Go to home"
+
+[[manager.prepend_keymap]]
+on = ["g", "/"]
+run = "cd /"
+desc = "Go to root"
+
+[[manager.prepend_keymap]]
+on = ["g", "t"]
+run = "cd /tmp"
+desc = "Go to /tmp"
+
+# ============================================
+# FILE OPERATIONS
+# ============================================
+[[manager.prepend_keymap]]
+# Space to select (like vim visual mode)
+on = ["<Space>"]
+run = "select --state=none"
+desc = "Toggle selection"
+
+[[manager.prepend_keymap]]
+# Visual mode for selection
+on = ["v"]
+run = "visual_mode"
+desc = "Enter visual mode (selection)"
+
+[[manager.prepend_keymap]]
+on = ["V"]
+run = "visual_mode --unset"
+desc = "Enter visual mode and clear selection"
+
+[[manager.prepend_keymap]]
+# New file (like vim)
+on = ["n", "f"]
+run = "create --force"
+desc = "Create new file"
+
+[[manager.prepend_keymap]]
+on = ["n", "d"]
+run = "create --dir --force"
+desc = "Create new directory"
+
+[[manager.prepend_keymap]]
+# Rename (like vim)
+on = ["r"]
+run = "rename --cursor=before-ext"
+desc = "Rename file"
+
+[[manager.prepend_keymap]]
+# Delete (like vim dd)
+on = ["d", "d"]
+run = "remove"
+desc = "Trash selected files"
+
+[[manager.prepend_keymap]]
+on = ["D", "D"]
+run = "remove --permanently"
+desc = "Permanently delete selected files"
+
+[[manager.prepend_keymap]]
+# Yank (copy) like vim
+on = ["y", "y"]
+run = "yank"
+desc = "Yank (copy) selected files"
+
+[[manager.prepend_keymap]]
+on = ["y", "p"]
+run = "yank --path"
+desc = "Yank file path"
+
+[[manager.prepend_keymap]]
+# Cut (like vim)
+on = ["x", "x"]
+run = "cut"
+desc = "Cut selected files"
+
+[[manager.prepend_keymap]]
+# Paste (like vim)
+on = ["p"]
+run = "paste"
+desc = "Paste files"
+
+[[manager.prepend_keymap]]
+on = ["P"]
+run = "paste --force"
+desc = "Paste files (overwrite)"
+
+# ============================================
+# VIEW & PREVIEW
+# ============================================
+[[manager.prepend_keymap]]
+on = ["<Tab>"]
+run = "preview --toggle"
+desc = "Toggle preview"
+
+[[manager.prepend_keymap]]
+on = ["K"]
+run = "help"
+desc = "Show help"
+
+# ============================================
+# SEARCH & FILTER
+# ============================================
+[[manager.prepend_keymap]]
+# Search (like vim)
+on = ["/"]
+run = "find --smart"
+desc = "Search in current directory"
+
+[[manager.prepend_keymap]]
+on = ["?"]
+run = "find --previous --smart"
+desc = "Search backwards"
+
+[[manager.prepend_keymap]]
+# Filter
+on = ["f", "f"]
+run = "filter --smart"
+desc = "Filter files"
+
+# ============================================
+# SORTING
+# ============================================
+[[manager.prepend_keymap]]
+on = [",", "m"]
+run = "sort modified --reverse=no"
+desc = "Sort by modified time"
+
+[[manager.prepend_keymap]]
+on = [",", "M"]
+run = "sort modified --reverse"
+desc = "Sort by modified time (reversed)"
+
+[[manager.prepend_keymap]]
+on = [",", "n"]
+run = "sort alphabetical --reverse=no"
+desc = "Sort alphabetically"
+
+[[manager.prepend_keymap]]
+on = [",", "N"]
+run = "sort alphabetical --reverse"
+desc = "Sort alphabetically (reversed)"
+
+[[manager.prepend_keymap]]
+on = [",", "s"]
+run = "sort size --reverse=no"
+desc = "Sort by size"
+
+# ============================================
+# SHELL & EXTERNAL
+# ============================================
+[[manager.prepend_keymap]]
+# Open shell in current directory
+on = [":"]
+run = 'shell "$SHELL" --block --confirm'
+desc = "Open shell in current directory"
+
+[[manager.prepend_keymap]]
+# Open with (alternative)
+on = ["o", "o"]
+run = "open --interactive"
+desc = "Open with specific application"
+
+[[manager.prepend_keymap]]
+# Quick look with space (if not selecting)
+on = ["<Enter>"]
+run = "open"
+desc = "Open file or enter directory"
+
+# ============================================
+# TABS (if you use multiple tabs)
+# ============================================
+[[manager.prepend_keymap]]
+on = ["t", "n"]
+run = "tab_create --current"
+desc = "Create new tab"
+
+[[manager.prepend_keymap]]
+on = ["t", "c"]
+run = "tab_close"
+desc = "Close current tab"
+
+[[manager.prepend_keymap]]
+on = ["t", "l"]
+run = "tab_switch 1 --relative"
+desc = "Next tab"
+
+[[manager.prepend_keymap]]
+on = ["t", "h"]
+run = "tab_switch -1 --relative"
+desc = "Previous tab"

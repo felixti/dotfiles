@@ -1,0 +1,127 @@
+# Yazi Configuration - Fixed for v0.3+
+# Theme: Catppuccin Mocha inspired
+
+[manager]
+# Show hidden files by default
+show_hidden = true
+# Show directories first
+sort_dir_first = true
+# Sort by modification time (newest first)
+sort_by = "modified"
+sort_sensitive = false
+sort_reverse = true
+# Use natural sorting for numbers
+linemode = "size"
+# Show symlink target
+show_symlink = true
+
+[preview]
+# Preview image dimensions
+max_width = 1000
+max_height = 1000
+tab_size = 2
+# Use kitty's image protocol
+image_filter = "triangle"
+image_quality = 90
+
+[opener]
+# Text editor - Neovim
+edit = [
+    { run = 'nvim "$@"', block = true, for = "unix" },
+]
+
+# Markdown viewer
+view-md = [
+    { run = 'glow "$@"', block = true },
+]
+
+# PDF viewer
+pdf = [
+    { run = 'zathura "$@"', orphan = true },
+]
+
+# Image viewer
+image = [
+    { run = 'imv "$@"', orphan = true },
+]
+
+# Video player
+video = [
+    { run = 'mpv "$@"', orphan = true },
+]
+
+# Audio player
+audio = [
+    { run = 'mpv "$@"', orphan = true },
+]
+
+# Archive extraction
+extract = [
+    { run = 'unar "$1"', block = true },
+]
+
+# Open with default application
+open = [
+    { run = 'xdg-open "$@"', orphan = true, desc = "Open" },
+]
+
+[open]
+# File associations
+rules = [
+    # Text files
+    { mime = "text/*", use = "edit" },
+    { name = "*.md", use = "view-md" },
+    
+    # Code files
+    { mime = "application/json", use = "edit" },
+    { mime = "application/xml", use = "edit" },
+    { name = "*.toml", use = "edit" },
+    { name = "*.yaml", use = "edit" },
+    { name = "*.yml", use = "edit" },
+    
+    # Images
+    { mime = "image/*", use = "image" },
+    
+    # Videos
+    { mime = "video/*", use = "video" },
+    
+    # Audio
+    { mime = "audio/*", use = "audio" },
+    
+    # PDFs
+    { mime = "application/pdf", use = "pdf" },
+    
+    # Archives
+    { mime = "application/zip", use = "extract" },
+    { mime = "application/gzip", use = "extract" },
+    { mime = "application/x-tar", use = "extract" },
+    { mime = "application/x-bzip2", use = "extract" },
+    { mime = "application/x-7z-compressed", use = "extract" },
+    { mime = "application/x-rar", use = "extract" },
+    
+    # Fallback
+    { use = "open" },
+]
+
+[task]
+# Number of concurrent tasks
+micro_workers = 5
+macro_workers = 10
+
+[input]
+# Input cursor style
+cursor_blink = false
+
+[confirm]
+# Confirm on delete
+trash = true
+delete = true
+# Confirm on overwrite
+overwrite = true
+# Confirm on quit with running tasks
+quit = true
+
+[select]
+# Selection options
+open = true
+open_title = "Open with:"

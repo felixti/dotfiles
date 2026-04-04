@@ -1,0 +1,3 @@
+-- Yazi Initialization
+-- Add your custom Lua code here
+-- Plugins can be added with: require("plugin-name"):setup()
