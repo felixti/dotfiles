@@ -1,0 +1,29 @@
+/* Nemo sidebar Catppuccin Mocha */
+.nemo-window .sidebar {
+    background-color: #1e1e2e;
+    color: #cdd6f4;
+}
+.nemo-window .sidebar .nemo-window-row {
+    color: #cdd6f4;
+}
+.nemo-window .sidebar .nemo-window-row:selected {
+    background-color: #313244;
+    color: #cba6f7;
+}
+.nemo-window .sidebar .nemo-window-row:hover {
+    background-color: rgba(205, 202, 230, 0.1);
+}
+.nemo-window .nemoPlacesSidebar {
+    background-color: #1e1e2e;
+}
+.nemo-window .nemo-inactive-pane .view {
+    background-color: #1e1e2e;
+}
+.nemo-window .nemo-window-pane > .view {
+    background-color: #181825;
+}
+/* Nemo toolbar */
+.nemo-window .toolbar {
+    background-color: #181825;
+    color: #cdd6f4;
+}
