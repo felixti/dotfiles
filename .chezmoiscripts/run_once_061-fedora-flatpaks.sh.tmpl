@@ -1,6 +1,16 @@
 #!/bin/bash
-{{ if ne .flavor "fedora-atomic" }}exit 0{{ end }}
+{{ if and (ne .flavor "fedora-atomic") (ne .flavor "arch") (ne .flavor "debian") }}exit 0{{ end }}
 set -e
+
+# Install flatpak if not present (fedora-atomic has it natively)
+if ! command -v flatpak &>/dev/null; then
+    echo "Installing flatpak..."
+    {{- if eq .flavor "arch" }}
+    sudo pacman -S --noconfirm flatpak
+    {{- else if eq .flavor "debian" }}
+    sudo apt install -y flatpak
+    {{- end }}
+fi
 
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
