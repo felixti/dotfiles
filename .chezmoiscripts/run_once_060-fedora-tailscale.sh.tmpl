@@ -1,0 +1,11 @@
+#!/bin/bash
+{{ if ne .flavor "fedora-atomic" }}exit 0{{ end }}
+# Install Tailscale on Fedora Atomic via rpm-ostree layering
+set -e
+
+command -v tailscale &>/dev/null && exit 0
+
+echo "Installing Tailscale on Fedora Atomic..."
+sudo rpm-ostree install tailscale
+echo "✓ Tailscale installed — reboot required to activate"
+echo "  After reboot: sudo systemctl enable --now tailscaled && sudo tailscale up"

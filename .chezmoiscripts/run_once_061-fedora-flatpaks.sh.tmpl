@@ -1,0 +1,19 @@
+#!/bin/bash
+{{ if ne .flavor "fedora-atomic" }}exit 0{{ end }}
+set -e
+
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+FLATPAKS=(
+    com.vscodium.codium
+    org.mozilla.firefox
+    com.discordapp.Discord
+)
+
+for app in "${FLATPAKS[@]}"; do
+    flatpak info "$app" &>/dev/null && continue
+    echo "Installing $app..."
+    flatpak install -y flathub "$app"
+done
+
+echo "✓ Flatpaks installed"

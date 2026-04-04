@@ -1,0 +1,396 @@
+#!/bin/bash
+{{ if ne .flavor "fedora-atomic" }}exit 0{{ end }}
+# Security hardening for Fedora Atomic
+# Re-runs whenever this script changes (run_onchange_ prefix)
+
+# Security Hardening Script for Fedora 43 Atomic (Bluefin)
+# Configures firewall, fail2ban, and SSH hardening
+
+set -e
+
+# Colors for output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+echo -e "${CYAN}╔════════════════════════════════════════════════╗${NC}"
+echo -e "${CYAN}║     Security Hardening for Fedora Atomic       ║${NC}"
+echo -e "${CYAN}╚════════════════════════════════════════════════╝${NC}"
+echo ""
+
+# ============================================
+# CHECK ROOT/SUDO
+# ============================================
+if [ "$EUID" -ne 0 ] && ! sudo -n true 2>/dev/null; then
+    echo -e "${RED}✗ This script requires sudo privileges${NC}"
+    exit 1
+fi
+
+# ============================================
+# DETECT SYSTEM
+# ============================================
+detect_system() {
+    if [ -f /run/ostree-booted ]; then
+        echo "atomic"
+    elif [ -f /etc/fedora-release ]; then
+        echo "fedora"
+    else
+        echo "unknown"
+    fi
+}
+
+SYSTEM_TYPE=$(detect_system)
+echo -e "${BLUE}System detected: $SYSTEM_TYPE${NC}"
+echo ""
+
+# ============================================
+# 1. FIREWALL CONFIGURATION
+# ============================================
+configure_firewall() {
+    echo -e "${BLUE}🔥 Configuring Firewall...${NC}"
+    
+    # Ensure firewalld is running
+    if ! systemctl is-active --quiet firewalld; then
+        echo -e "${YELLOW}Starting firewalld...${NC}"
+        sudo systemctl enable --now firewalld
+    fi
+    
+    # Add SSH service
+    if ! sudo firewall-cmd --list-services | grep -qw ssh; then
+        sudo firewall-cmd --permanent --add-service=ssh
+        echo -e "${GREEN}✓ Added SSH service${NC}"
+    else
+        echo -e "${GREEN}✓ SSH service already allowed${NC}"
+    fi
+    
+    # Add Tailscale rule
+    if ! sudo firewall-cmd --list-rich-rules | grep -q "100.64.0.0/10"; then
+        echo -e "${YELLOW}Add Tailscale firewall rule?${NC}"
+        echo "1) Full access (all ports from Tailscale)"
+        echo "2) Restricted (SSH and HTTPS only)"
+        echo "3) Skip"
+        read -p "Select [1-3]: " fw_choice
+        
+        case $fw_choice in
+            1)
+                sudo firewall-cmd --permanent \
+                    --add-rich-rule='rule family="ipv4" source address="100.64.0.0/10" accept'
+                echo -e "${GREEN}✓ Added Tailscale full access${NC}"
+                ;;
+            2)
+                sudo firewall-cmd --permanent \
+                    --add-rich-rule='rule family="ipv4" source address="100.64.0.0/10" service name="ssh" accept'
+                sudo firewall-cmd --permanent \
+                    --add-rich-rule='rule family="ipv4" source address="100.64.0.0/10" service name="https" accept'
+                echo -e "${GREEN}✓ Added Tailscale restricted access${NC}"
+                ;;
+            3)
+                echo -e "${YELLOW}Skipped Tailscale rule${NC}"
+                ;;
+        esac
+    else
+        echo -e "${GREEN}✓ Tailscale rule already exists${NC}"
+    fi
+    
+    # Reload firewall
+    sudo firewall-cmd --reload
+    echo -e "${GREEN}✓ Firewall configured${NC}"
+    echo ""
+}
+
+# ============================================
+# 2. FAIL2BAN SETUP
+# ============================================
+setup_fail2ban() {
+    echo -e "${BLUE}🛡️ Setting up Fail2ban...${NC}"
+    
+    if docker ps --format "{{.Names}}" | grep -q "^fail2ban$"; then
+        echo -e "${GREEN}✓ Fail2ban is already running${NC}"
+        return 0
+    fi
+    
+    # Create config directory
+    mkdir -p ~/.config/fail2ban
+    
+    # Create custom jail configuration
+    cat > ~/.config/fail2ban/jail.local << 'EOF'
+[DEFAULT]
+bantime = 1h
+findtime = 10m
+maxretry = 5
+backend = auto
+
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/secure
+maxretry = 3
+bantime = 24h
+
+[dropbear]
+enabled = false
+
+[selinux-ssh]
+enabled = false
+EOF
+    
+    echo -e "${GREEN}✓ Created fail2ban configuration${NC}"
+    
+    # Run fail2ban container
+    if docker run -d --name fail2ban \
+        --network host \
+        --cap-add NET_ADMIN \
+        --restart unless-stopped \
+        -v /var/log:/var/log:ro \
+        -v ~/.config/fail2ban:/data \
+        crazymax/fail2ban:latest 2>/dev/null; then
+        
+        echo -e "${GREEN}✓ Fail2ban container started${NC}"
+        
+        # Wait a moment for container to initialize
+        sleep 2
+        
+        # Check status
+        if docker exec fail2ban fail2ban-client status sshd &>/dev/null; then
+            echo -e "${GREEN}✓ Fail2ban is protecting SSH${NC}"
+        else
+            echo -e "${YELLOW}⚠ Fail2ban started but SSH jail not active yet${NC}"
+        fi
+    else
+        echo -e "${RED}✗ Failed to start fail2ban container${NC}"
+        echo -e "${YELLOW}  Check: docker logs fail2ban${NC}"
+    fi
+    
+    echo ""
+}
+
+# ============================================
+# 3. ROOT ACCOUNT SECURITY
+# ============================================
+secure_root() {
+    echo -e "${BLUE}🔒 Securing Root Account...${NC}"
+    
+    # Check current root status
+    root_status=$(sudo passwd -S root 2>/dev/null | awk '{print $2}')
+    
+    if [ "$root_status" = "L" ] || [ "$root_status" = "LK" ]; then
+        echo -e "${GREEN}✓ Root account is already locked${NC}"
+    else
+        echo -e "${YELLOW}Locking root password...${NC}"
+        sudo passwd -l root
+        echo -e "${GREEN}✓ Root account locked${NC}"
+    fi
+    
+    echo ""
+}
+
+# ============================================
+# 4. SSH HARDENING
+# ============================================
+harden_ssh() {
+    echo -e "${BLUE}🔐 SSH Hardening...${NC}"
+    
+    ssh_config="/etc/ssh/sshd_config"
+    
+    # Check if we can access SSH config
+    if [ ! -f "$ssh_config" ]; then
+        echo -e "${YELLOW}⚠ SSH config not found at $ssh_config${NC}"
+        return 1
+    fi
+    
+    # Ensure SSH host keys exist (required for sshd -t to work)
+    if [ ! -f /etc/ssh/ssh_host_rsa_key ] && [ ! -f /etc/ssh/ssh_host_ed25519_key ] && [ ! -f /etc/ssh/ssh_host_ecdsa_key ]; then
+        echo -e "${YELLOW}⚠ SSH host keys not found, generating...${NC}"
+        sudo ssh-keygen -A
+        echo -e "${GREEN}✓ SSH host keys generated${NC}"
+    fi
+    
+    # Show current SSH authentication methods
+    echo -e "${CYAN}Current SSH settings:${NC}"
+    grep -E "^(#)?(PermitRootLogin|PasswordAuthentication|PubkeyAuthentication)" "$ssh_config" 2>/dev/null || echo "  (using defaults)"
+    
+    echo ""
+    echo -e "${YELLOW}⚠ WARNING: Disabling password authentication may lock you out!${NC}"
+    echo -e "${CYAN}Ensure you have SSH key access before proceeding.${NC}"
+    echo ""
+    read -p "Apply SSH hardening? [y/N] " -n 1 -r
+    echo ""
+    
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo -e "${YELLOW}Skipped SSH hardening${NC}"
+        return 0
+    fi
+    
+    # Backup original config
+    sudo cp "$ssh_config" "${ssh_config}.backup.$(date +%Y%m%d%H%M%S)"
+    echo -e "${GREEN}✓ Backup created${NC}"
+    
+    # Apply hardening settings
+    sudo sed -i 's/^#*PermitRootLogin.*/PermitRootLogin no/' "$ssh_config"
+    sudo sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication no/' "$ssh_config"
+    sudo sed -i 's/^#*PubkeyAuthentication.*/PubkeyAuthentication yes/' "$ssh_config"
+    
+    # Add settings if they don't exist
+    grep -q "^PermitRootLogin" "$ssh_config" || echo "PermitRootLogin no" | sudo tee -a "$ssh_config" > /dev/null
+    grep -q "^PasswordAuthentication" "$ssh_config" || echo "PasswordAuthentication no" | sudo tee -a "$ssh_config" > /dev/null
+    grep -q "^PubkeyAuthentication" "$ssh_config" || echo "PubkeyAuthentication yes" | sudo tee -a "$ssh_config" > /dev/null
+    
+    # Generate host keys if they don't exist (common on fresh installs)
+    if [ ! -f /etc/ssh/ssh_host_rsa_key ] && [ ! -f /etc/ssh/ssh_host_ed25519_key ]; then
+        echo -e "${YELLOW}⚠ SSH host keys not found, generating...${NC}"
+        sudo ssh-keygen -A
+        echo -e "${GREEN}✓ SSH host keys generated${NC}"
+    fi
+    
+    # Validate SSH config
+    if sudo sshd -t 2>&1; then
+        echo -e "${GREEN}✓ SSH configuration is valid${NC}"
+        
+        # Reload or start SSH
+        if systemctl is-active --quiet sshd; then
+            sudo systemctl reload sshd
+            echo -e "${GREEN}✓ SSH reloaded with new settings${NC}"
+        else
+            sudo systemctl enable --now sshd
+            echo -e "${GREEN}✓ SSH started with new settings${NC}"
+        fi
+    else
+        echo -e "${RED}✗ SSH configuration is invalid!${NC}"
+        echo -e "${YELLOW}Restoring backup...${NC}"
+        sudo cp "${ssh_config}.backup."* "$ssh_config"
+        return 1
+    fi
+    
+    echo ""
+}
+
+# ============================================
+# 5. VERIFY SETUP
+# ============================================
+verify_setup() {
+    echo -e "${CYAN}╔════════════════════════════════════════════════╗${NC}"
+    echo -e "${CYAN}║           Verification Checklist               ║${NC}"
+    echo -e "${CYAN}╚════════════════════════════════════════════════╝${NC}"
+    echo ""
+    
+    local all_good=true
+    
+    # Check Firewall
+    echo -e "${BLUE}🔥 Firewall:${NC}"
+    if systemctl is-active --quiet firewalld; then
+        echo -e "  ${GREEN}✓ Running${NC}"
+        if sudo firewall-cmd --list-rich-rules | grep -q "100.64.0.0/10"; then
+            echo -e "  ${GREEN}✓ Tailscale rule active${NC}"
+        else
+            echo -e "  ${YELLOW}⚠ No Tailscale rule${NC}"
+        fi
+    else
+        echo -e "  ${RED}✗ Not running${NC}"
+        all_good=false
+    fi
+    
+    # Check Fail2ban
+    echo -e "${BLUE}🛡️ Fail2ban:${NC}"
+    if docker ps --format "{{.Names}}" | grep -q "^fail2ban$"; then
+        echo -e "  ${GREEN}✓ Running${NC}"
+    else
+        echo -e "  ${RED}✗ Not running${NC}"
+        all_good=false
+    fi
+    
+    # Check Root
+    echo -e "${BLUE}🔒 Root Account:${NC}"
+    root_status=$(sudo passwd -S root 2>/dev/null | awk '{print $2}')
+    if [ "$root_status" = "L" ] || [ "$root_status" = "LK" ]; then
+        echo -e "  ${GREEN}✓ Locked${NC}"
+    else
+        echo -e "  ${YELLOW}⚠ Not locked${NC}"
+    fi
+    
+    # Check SSH
+    echo -e "${BLUE}🔐 SSH:${NC}"
+    if grep -q "^PasswordAuthentication no" /etc/ssh/sshd_config 2>/dev/null; then
+        echo -e "  ${GREEN}✓ Password auth disabled${NC}"
+    else
+        echo -e "  ${YELLOW}⚠ Password auth enabled${NC}"
+    fi
+    
+    echo ""
+    if [ "$all_good" = true ]; then
+        echo -e "${GREEN}✅ All critical services are configured!${NC}"
+    else
+        echo -e "${YELLOW}⚠ Some services need attention${NC}"
+    fi
+    
+    echo ""
+    echo -e "${CYAN}Commands for management:${NC}"
+    echo "  ./tailscale-firewall.sh status    # Check firewall"
+    echo "  docker logs fail2ban              # Check fail2ban"
+    echo "  sudo tailscale status             # Check Tailscale"
+}
+
+# ============================================
+# MAIN MENU
+# ============================================
+main() {
+    case "${1:-}" in
+        --firewall|-f)
+            configure_firewall
+            ;;
+        --fail2ban|-b)
+            setup_fail2ban
+            ;;
+        --root|-r)
+            secure_root
+            ;;
+        --ssh|-s)
+            harden_ssh
+            ;;
+        --verify|-v)
+            verify_setup
+            ;;
+        --all|-a)
+            configure_firewall
+            setup_fail2ban
+            secure_root
+            harden_ssh
+            verify_setup
+            ;;
+        --help|-h)
+            echo "Security Hardening for Fedora Atomic"
+            echo ""
+            echo "Usage: $0 [OPTION]"
+            echo ""
+            echo "Options:"
+            echo "  --all, -a       Run all hardening steps"
+            echo "  --firewall, -f  Configure firewall only"
+            echo "  --fail2ban, -b  Setup fail2ban only"
+            echo "  --root, -r      Secure root account only"
+            echo "  --ssh, -s       Harden SSH only"
+            echo "  --verify, -v    Verify current setup"
+            echo "  --help, -h      Show this help"
+            echo ""
+            echo "Without options, runs interactive mode."
+            ;;
+        "")
+            # Interactive mode
+            configure_firewall
+            setup_fail2ban
+            secure_root
+            harden_ssh
+            verify_setup
+            ;;
+        *)
+            echo -e "${RED}Unknown option: $1${NC}"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+}
+
+# Run main
+main "$@"
