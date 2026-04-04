@@ -1,0 +1,72 @@
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$DOTNET_ROOT:$DOTNET_ROOT/tools:$PATH"
+
+# ============================================
+# ZSH CORE OPTIONS
+# ============================================
+autoload -U compinit
+setopt COMPLETE_IN_WORD
+setopt AUTO_CD
+setopt EXTENDED_GLOB
+setopt NO_BEEP
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_VERIFY
+
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=10000
+
+# ============================================
+# COMPLETION (cached, one rebuild per day)
+# ============================================
+autoload -Uz compinit
+if [[ -n ~/.zcompdump(#qN.m+1) ]]; then
+    compinit -C
+else
+    compinit
+fi
+
+# ============================================
+# ANTIDOTE PLUGIN MANAGER
+# ============================================
+zsh_plugins=${ZDOTDIR:-~}/.zsh_plugins.zsh
+fpath+=(${ZDOTDIR:-~}/.antidote)
+autoload -Uz $fpath[-1]/antidote
+if [[ ! $zsh_plugins -nt ${zsh_plugins:r}.txt ]]; then
+    (antidote bundle <${zsh_plugins:r}.txt >|$zsh_plugins)
+fi
+source $zsh_plugins
+
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#663399,bold"
+
+# ============================================
+# MODULAR ZSH CONFIG
+# ============================================
+source ~/.config/zsh/main.zsh
+
+# ============================================
+# UBLUE BLING (Fedora Atomic only)
+# ============================================
+{{- if eq .flavor "fedora-atomic" }}
+test -f /usr/share/ublue-os/bling/bling.sh && source /usr/share/ublue-os/bling/bling.sh
+{{- end }}
+
+# Yazi cd-on-quit
+function yy() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+}
+
+# Custom completions
+fpath=(~/.config/zsh/completions $fpath)
+
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local

@@ -1,0 +1,4 @@
+# Essential plugins only - order matters for syntax highlighting
+zsh-users/zsh-completions
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-syntax-highlighting
