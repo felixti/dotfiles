@@ -1,0 +1,113 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 34,
+    "spacing": 4,
+
+    "modules-left": ["hypr/workspaces"],
+    "modules-center": ["hypr/window"],
+    "modules-right": ["pulseaudio", "backlight", "cpu", "memory", "temperature", "clock"],
+
+    "hypr/workspaces": {
+        "disable-scroll": false,
+        "all-outputs": false,
+        "on-click": "activate",
+        "format": "{icon}",
+        "format-icons": {
+            "1": "一",
+            "2": "二",
+            "3": "三",
+            "4": "四",
+            "5": "五",
+            "6": "六",
+            "7": "七",
+            "8": "八",
+            "9": "九",
+            "10": "十",
+            "urgent": "",
+            "focused": ""
+        },
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+            "5": []
+        }
+    },
+
+    "hypr/window": {
+        "max-length": 50,
+        "separate-outputs": true
+    },
+
+    "clock": {
+        "timezone": "Local",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format": "{:%H:%M}",
+        "format-alt": "{:%Y-%m-%d  %H:%M:%S}"
+    },
+
+    "cpu": {
+        "format": " {usage}%",
+        "tooltip": true
+    },
+
+    "memory": {
+        "format": " {}%"
+    },
+
+    "temperature": {
+        "thermal-zone": 2,
+        "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+        "critical-threshold": 80,
+        "format-critical": " {temperatureC}°C",
+        "format": " {temperatureC}°C"
+    },
+
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": " 婢",
+        "format-source": " {volume}%  ",
+        "format-source-muted": "",
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "scroll-step": 5,
+        "format-icons": {
+            "default": ["婢", "奔", "坟"]
+        },
+        "tooltip-format": " {desc}"
+    },
+
+    "backlight": {
+        "device": "intel_backlight",
+        "format": "{icon}  {percent}%",
+        "format-icons": ["", "", ""],
+        "on-scroll-up": "brightnessctl set +5%",
+        "on-scroll-down": "brightnessctl set 5%-",
+        "min-percent": 1
+    },
+
+    "battery": {
+        "states": {
+            "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon}  {capacity}%",
+        "format-charging": " 󰂄 {capacity}%",
+        "format-plugged": " 󰂄 {capacity}%",
+        "format-alt": "{icon} {time}",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "{timeTo}, {capacity}%"
+    },
+
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    },
+
+    "idle": {
+        "locked-fullscreen": "swaylock -f -F",
+        "before-sleep": "swaylock -f -F"
+    }
+}
