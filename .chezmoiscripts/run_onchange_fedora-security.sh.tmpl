@@ -107,7 +107,7 @@ configure_firewall() {
 setup_fail2ban() {
     echo -e "${BLUE}🛡️ Setting up Fail2ban...${NC}"
     
-    if docker ps --format "{{.Names}}" | grep -q "^fail2ban$"; then
+    if docker ps --format '{{ printf "{{.Names}}" }}' | grep -q "^fail2ban$"; then
         echo -e "${GREEN}✓ Fail2ban is already running${NC}"
         return 0
     fi
@@ -295,7 +295,7 @@ verify_setup() {
     
     # Check Fail2ban
     echo -e "${BLUE}🛡️ Fail2ban:${NC}"
-    if docker ps --format "{{.Names}}" | grep -q "^fail2ban$"; then
+    if docker ps --format '{{ printf "{{.Names}}" }}' | grep -q "^fail2ban$"; then
         echo -e "  ${GREEN}✓ Running${NC}"
     else
         echo -e "  ${RED}✗ Not running${NC}"
