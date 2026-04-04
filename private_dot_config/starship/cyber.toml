@@ -1,0 +1,142 @@
+# ============================================
+# THEME: Cyber Modern
+# Vibe: Neon powerline, high contrast, futuristic
+# ============================================
+
+format = """
+[](color_orange)$os$username[](bg:color_yellow fg:color_orange)$directory[](fg:color_yellow bg:color_aqua)$git_branch$git_status[](fg:color_aqua bg:color_bg3)$nodejs$python$rust$golang[](fg:color_bg3 bg:color_bg1)\n[╰─](color_blue)$character"""
+
+# Custom palette for neon cyber look
+palette = 'cyber'
+
+[palettes.cyber]
+color_fg0 = '#fbf1c7'
+color_bg1 = '#3c3836'
+color_bg3 = '#665c54'
+color_blue = '#83a598'
+color_aqua = '#8ec07c'
+color_green = '#b8bb26'
+color_orange = '#fe8019'
+color_purple = '#d3869b'
+color_red = '#fb4934'
+color_yellow = '#fabd2f'
+
+# Prompt character - neon block
+[character]
+success_symbol = '[➜](bold green) '
+error_symbol = '[✖](bold red) '
+vimcmd_symbol = '[◀](bold green) '
+
+# OS indicator
+[os]
+disabled = false
+style = 'bg:color_orange bold fg:color_fg0'
+format = '[$symbol ]($style)'
+
+[os.symbols]
+Arch = ''
+Debian = ''
+Fedora = ''
+NixOS = ''
+openSUSE = ''
+Ubuntu = ''
+Macos = ''
+Windows = ''
+Unknown = ''
+Linux = ''
+
+# Username
+[username]
+show_always = true
+style_user = 'bg:color_orange bold fg:color_fg0'
+style_root = 'bg:color_orange bold fg:color_red'
+format = '[ $user ]($style)'
+
+# Directory - powerline segment
+[directory]
+style = 'bold fg:color_fg0 bg:color_yellow'
+format = '[ $path ]($style)'
+truncation_length = 3
+truncation_symbol = '…/'
+
+# Git branch - powerline
+[git_branch]
+symbol = ''
+style = 'bg:color_aqua fg:color_bg1 bold'
+format = '[ $symbol $branch ]($style)'
+
+# Git status - integrated
+[git_status]
+style = 'bg:color_aqua fg:color_bg1'
+format = '[$all_status$ahead_behind ]($style)'
+ahead = '[${count}](bg:color_aqua fg:color_green) '
+behind = '[${count}](bg:color_aqua fg:color_red) '
+diverged = '[${ahead_count} ${behind_count}](bg:color_aqua fg:color_purple) '
+conflicted = '[](bg:color_aqua fg:color_red) '
+up_to_date = '[✓](bg:color_aqua fg:color_green) '
+untracked = '[${count}](bg:color_aqua fg:color_yellow) '
+stashed = '[](bg:color_aqua fg:color_blue) '
+modified = '[${count}](bg:color_aqua fg:color_yellow) '
+staged = '[${count}](bg:color_aqua fg:color_green) '
+renamed = '[](bg:color_aqua fg:color_blue) '
+deleted = '[${count}](bg:color_aqua fg:color_red) '
+
+# Languages - neon badges
+[nodejs]
+symbol = ''
+style = 'bg:color_bg3 fg:color_green bold'
+format = '[ $symbol $version ]($style)'
+detect_files = ['package.json', '.nvmrc', 'bun.lockb']
+detect_extensions = ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts', 'jsx', 'tsx']
+version_format = '${raw}'
+
+[python]
+symbol = ''
+style = 'bg:color_bg3 fg:color_yellow bold'
+format = '[ $symbol $version ]($style)'
+detect_files = ['requirements.txt', 'pyproject.toml', 'setup.py', 'Pipfile', 'poetry.lock']
+detect_extensions = ['py', 'ipynb']
+version_format = '${raw}'
+
+[rust]
+symbol = ''
+style = 'bg:color_bg3 fg:color_red bold'
+format = '[ $symbol $version ]($style)'
+detect_files = ['Cargo.toml', 'Cargo.lock']
+detect_extensions = ['rs']
+version_format = '${raw}'
+
+[golang]
+symbol = ''
+style = 'bg:color_bg3 fg:color_aqua bold'
+format = '[ $symbol $version ]($style)'
+detect_files = ['go.mod', 'go.sum']
+detect_extensions = ['go']
+version_format = '${raw}'
+
+[bun]
+symbol = ''
+style = 'bg:color_bg3 fg:color_fg0 bold'
+format = '[ $symbol $version ]($style)'
+detect_files = ['bun.lockb']
+detect_extensions = ['ts', 'tsx', 'js', 'jsx']
+version_format = '${raw}'
+
+# Docker
+disabled = false
+style = 'bg:color_bg3 fg:color_blue bold'
+format = '[  $version ]($style)'
+detect_files = ['Dockerfile', 'docker-compose.yml', 'compose.yaml']
+
+# Disable defaults
+[package]
+disabled = true
+
+[cmd_duration]
+disabled = true
+
+[hostname]
+disabled = true
+
+[line_break]
+disabled = false

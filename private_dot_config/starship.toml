@@ -1,0 +1,128 @@
+# ============================================
+# THEME: Developer Pro
+# Vibe: Rich info, organized, tech-focused badges
+# ============================================
+
+format = """
+$directory$git_branch$git_status$fill$nodejs$python$rust$golang$docker_context\n$character"""
+
+# Right-side formatting for languages on same line
+right_format = ''''''
+
+# Prompt character - professional arrow
+[character]
+success_symbol = '[➜](bold green)'
+error_symbol = '[✗](bold red)'
+vimcmd_symbol = '[◀](bold green)'
+
+# Directory - prominent and clear
+[directory]
+format = '[$path]($style) '
+truncation_length = 4
+truncation_symbol = '…/'
+style = 'bold cyan'
+read_only_style = 'red'
+read_only = ' 󰌾'
+before_repo_root_style = 'dimmed cyan'
+repo_root_style = 'bold bright-cyan'
+repo_root_format = '[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style) '
+
+# Git branch - clear and visible
+[git_branch]
+format = 'on [$symbol$branch]($style) '
+symbol = ' '
+style = 'bold purple'
+truncation_length = 25
+
+# Git status - detailed but compact
+[git_status]
+format = '([$all_status$ahead_behind]($style)) '
+style = 'yellow'
+conflicted = ' '
+ahead = '${count} '
+behind = '${count} '
+diverged = '${ahead_count} ${behind_count} '
+up_to_date = '✓ '
+untracked = '${count} '
+stashed = ' '
+modified = '${count} '
+staged = '${count} '
+renamed = ' '
+deleted = ' '
+
+# Language badges - show tech stack prominently
+[nodejs]
+format = '[ $version](bold green) '
+symbol = ''
+detect_files = ['package.json', '.nvmrc', 'bun.lockb', 'yarn.lock', 'pnpm-lock.yaml']
+detect_extensions = ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts', 'jsx', 'tsx']
+version_format = '${raw}'
+
+[python]
+format = '[ $version](bold yellow) '
+symbol = ''
+detect_files = ['requirements.txt', 'pyproject.toml', 'setup.py', 'Pipfile', 'poetry.lock', 'uv.lock']
+detect_extensions = ['py', 'ipynb']
+version_format = '${raw}'
+
+[rust]
+format = '[ $version](bold red) '
+symbol = ''
+detect_files = ['Cargo.toml', 'Cargo.lock']
+detect_extensions = ['rs']
+version_format = '${raw}'
+
+[golang]
+format = '[ $version](bold cyan) '
+symbol = ''
+detect_files = ['go.mod', 'go.sum', 'go.work']
+detect_extensions = ['go']
+version_format = '${raw}'
+
+[bun]
+format = '[ $version](bold white) '
+symbol = ''
+detect_files = ['bun.lockb']
+detect_extensions = ['ts', 'tsx', 'js', 'jsx']
+version_format = '${raw}'
+
+[docker_context]
+format = '[ $context](bold blue) '
+symbol = ''
+detect_files = ['Dockerfile', 'docker-compose.yml', 'docker-compose.yaml', 'compose.yml', 'compose.yaml']
+
+# Fill to push languages to the right
+[fill]
+symbol = ' '
+disabled = false
+
+# Useful context
+[cmd_duration]
+format = '[ $duration](dimmed yellow) '
+min_time = 2000
+show_notifications = false
+
+# Terraform / Infrastructure
+[terraform]
+format = '[󱁢 $version](bold magenta) '
+detect_files = ['.terraform', '*.tf', '*.tfvars']
+
+# Kubernetes
+[kubernetes]
+format = '[󱃾 $context( \($namespace\))](bold blue) '
+detect_files = ['*.yaml', '*.yml']
+detect_extensions = ['yaml', 'yml']
+disabled = false
+
+# Disable clutter
+[package]
+disabled = true
+
+[username]
+show_always = false
+
+[hostname]
+ssh_only = true
+format = '[$ssh_symbol$hostname]($style) '
+ssh_symbol = ' '
+style = 'dimmed green'

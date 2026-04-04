@@ -1,0 +1,88 @@
+# ============================================
+# THEME: Minimal Zen
+# Vibe: Ultra clean, calm, distraction-free
+# ============================================
+
+format = """
+$directory$git_branch$git_status\n$character"""
+
+# Prompt character - calm and simple
+[character]
+success_symbol = '[›](dimmed white)'
+error_symbol = '[›](dimmed red)'
+vimcmd_symbol = '[‹](dimmed green)'
+
+# Directory - clean and simple
+[directory]
+format = '[$path]($style) '
+truncation_length = 3
+truncation_symbol = '…/'
+style = 'bold blue'
+read_only_style = 'dimmed red'
+read_only = ' ro'
+
+# Git branch - subtle
+[git_branch]
+format = '[$symbol$branch]($style) '
+symbol = ''
+style = 'dimmed white'
+
+# Git status - minimal indicators
+[git_status]
+format = '[$all_status$ahead_behind]($style)'
+style = 'dimmed yellow'
+conflicted = '='
+ahead = '↑'
+behind = '↓'
+diverged = '↕'
+up_to_date = ''
+untracked = '?'
+stashed = '$'
+modified = '!'
+staged = '+'
+renamed = '»'
+deleted = '✘'
+
+# Language detection - show only when relevant
+[rust]
+format = '[$symbol](dimmed red) '
+symbol = ''
+detect_files = ['Cargo.toml']
+detect_extensions = ['rs']
+
+[nodejs]
+format = '[$symbol](dimmed green) '
+symbol = ''
+detect_files = ['package.json']
+detect_extensions = ['js', 'ts', 'jsx', 'tsx']
+
+[python]
+format = '[$symbol](dimmed yellow) '
+symbol = ''
+detect_files = ['requirements.txt', 'pyproject.toml', 'setup.py', 'Pipfile']
+detect_extensions = ['py']
+
+[golang]
+format = '[$symbol](dimmed cyan) '
+symbol = ''
+detect_files = ['go.mod', 'go.sum']
+detect_extensions = ['go']
+
+# Disable most modules for minimalism
+[package]
+disabled = true
+
+[cmd_duration]
+disabled = true
+
+[username]
+disabled = true
+
+[hostname]
+disabled = true
+
+[line_break]
+disabled = false
+
+[fill]
+disabled = true
