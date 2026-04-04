@@ -1,5 +1,6 @@
 {{- $flavor    := promptStringOnce . "flavor"          "Distro flavor (fedora-atomic/arch/debian/macos)" -}}
 {{- $de        := promptStringOnce . "de"              "Desktop env (gnome/kde/hyprland/none)" -}}
+{{- $fileManager := promptStringOnce . "fileManager" "File manager (yazi/nemo)" -}}
 {{- $name      := promptStringOnce . "gitName"         "Git full name" -}}
 {{- $email     := promptStringOnce . "gitEmail"        "Git email" -}}
 {{- $anthropic := promptStringOnce . "anthropicApiKey" "Anthropic API key (blank to skip)" -}}
@@ -9,6 +10,7 @@
 [data]
   flavor          = {{ $flavor    | quote }}
   de              = {{ $de        | quote }}
+  fileManager     = {{ $fileManager | quote }}
   gitName         = {{ $name      | quote }}
   gitEmail        = {{ $email     | quote }}
   anthropicApiKey = {{ $anthropic | quote }}
