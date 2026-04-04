@@ -1,0 +1,29 @@
+# KDE KWin Configuration
+# Vim-style tiling and window management
+
+[Windows]
+BorderlessMaximizedWindows=true
+WindowSnapArea=true
+WindowSnapThreshold=10
+FocusPolicy=ClickToFocus
+
+[Placement]
+Placement=Centered
+
+[KDE Action Restrictions][$i]
+_action=window_minimize
+
+[TabBox]
+MultitaskerviewRaise=true
+
+[InternalDialogs]
+KWIN_INTERNAL_DIALOGS=false
+
+[Plugins]
+kwin4-effect-windowadmenabled=true
+
+[Scripting]
+ScriptingEnabled=true
+
+[Moving]
+MinimizeWindowWhenMovingToEdge=false

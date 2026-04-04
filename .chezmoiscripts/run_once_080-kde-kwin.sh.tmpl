@@ -1,0 +1,122 @@
+#!/bin/bash
+{{ if ne .de "kde" }}exit 0{{ end }}
+# Install Krohnkite tiling + apply vim-style KWin keybinds
+# Works on: fedora-atomic, arch, debian
+set -e
+
+echo "Setting up KWin vim-style tiling..."
+
+# ── Install Krohnkite ────────────────────────────────────────────────────────────
+
+# Method 1: AUR (Arch / CachyOS)
+{{- if eq .flavor "arch" }}
+if command -v paru &>/dev/null; then
+    if ! pacman -Q kwin-scripts-krohnkite &>/dev/null; then
+        echo "Installing krohnkite via AUR..."
+        paru -S --noconfirm kwin-scripts-krohnkite
+    else
+        echo "krohnkite already installed via AUR"
+    fi
+fi
+{{- end }}
+
+# Method 2: Manual clone (all distros — clone Codeberg fork for Plasma 6)
+KROHNKITE_SRC="/tmp/krohnkite"
+KROHNKITE_DEST="$HOME/.local/share/kwin/scripts"
+if [ ! -d "$KROHNKITE_DEST/krohnkite" ]; then
+    echo "Installing Krohnkite from Codeberg..."
+    rm -rf "$KROHNKITE_SRC" "$KROHNKITE_DEST/krohnkite"
+    git clone --depth=1 https://codeberg.org/anametologin/Krohnkite "$KROHNKITE_SRC"
+    mkdir -p "$KROHNKITE_DEST"
+    mv "$KROHNKITE_SRC" "$KROHNKITE_DEST/krohnkite"
+    rm -rf "$KROHNKITE_SRC"
+    echo "✓ Krohnkite installed"
+fi
+
+# ── Enable Krohnkite via symlink ─────────────────────────────────────────────
+mkdir -p "$HOME/.local/share/kservices5"
+if [ ! -f "$HOME/.local/share/kservices5/krohnkite.desktop" ]; then
+    ln -sf "$HOME/.local/share/kwin/scripts/krohnkite/metadata.desktop" \
+            "$HOME/.local/share/kservices5/krohnkite.desktop"
+fi
+
+# ── Apply vim-style kwinrc ─────────────────────────────────────────────────────
+echo "Applying vim-style KWin shortcuts..."
+
+# Write ~/.config/kwinrc with vim-style tiling bindings
+cat > "$HOME/.config/kwinrc" << 'KWINRC'
+[Windows]
+BorderlessMaximizedWindows=true
+WindowSnapArea=true
+WindowSnapThreshold=10
+FocusPolicy=ClickToFocus
+
+[KDE Action Restrictions][$i]
+_action=window_minimize
+
+[ModifierOnlyShortcuts]
+Meta=org.kde.kglobalaccel,/component/kwin,invokeShortcut,Expose
+
+[Env]
+KWIN_COMPOSE=O2
+
+[Plugins]
+kwin4-effect-windowadmenabled=true
+KWIN_INTERNAL_DIALOGS=false
+
+[Scripting]
+ScriptingEnabled=true
+
+[TabBox]
+MultitaskerviewRaise=true
+
+[Windows]
+Placement=Centered
+
+[mrKWin]
+Script_Installed=true
+KWINRC
+
+
+# Krohnkite shortcut overrides — vim-style tiling
+# These go in a separate file to avoid overriding Plasma's shortcut system
+KROHNKITE_SHORTCUTS="$HOME/.config/krohnkiterc"
+cat > "$KROHNKITE_SHORTCUTS" << 'KROHNRC'
+# Krohnkite vim-style tiling shortcuts
+# Krohnkite binds its own Meta+J/K/H/L for focus and Meta+Shift+J/K/H/L for move
+# These are applied via KWin's custom shortcut system
+
+[Assignments]
+# Focus: Meta+J/K = down/up, Meta+H/L = left/right
+Meta+J=org.kde.kglobalaccel,/component/krohnkite,focusDown,org.kde.kglobalaccel.component.krohnkite
+Meta+K=org.kde.kglobalaccel,/component/krohnkite,focusUp,org.kde.kglobalaccel.component.krohnkite
+Meta+H=org.kde.kglobalaccel,/component/krohnkite,focusLeft,org.kde.kglobalaccel.component.krohnkite
+Meta+L=org.kde.kglobalaccel,/component/krohnkite,focusRight,org.kde.kglobalaccel.component.krohnkite
+
+# Move: Meta+Shift+J/K/H/L
+Meta+Shift+J=org.kde.kglobalaccel,/component/krohnkite,moveDown,org.kde.kglobalaccel.component.krohnkite
+Meta+Shift+K=org.kde.kglobalaccel,/component/krohnkite,moveUp,org.kde.kglobalaccel.component.krohnkite
+Meta+Shift+H=org.kde.kglobalaccel,/component/krohnkite,moveLeft,org.kde.kglobalaccel.component.krohnkite
+Meta+Shift+L=org.kde.kglobalaccel,/component/krohnkite,moveRight,org.kde.kglobalaccel.component.krohnkite
+
+# Layout controls
+Meta+E=org.kde.kglobalaccel,/component/krohnkite,focusOrWindowDown,org.kde.kglobalaccel.component.krohnkite
+Meta+D=org.kde.kglobalaccel,/component/krohnkite,focusOrWindowUp,org.kde.kglobalaccel.component.krohnkite
+
+# Window actions
+Meta+F=org.kde.kglobalaccel,/component/krohnkite,toggleFloat,org.kde.kglobalaccel.component.krohnkite
+Meta+M=org.kde.kglobalaccel,/component/krohnkite,layoutMonocle,org.kde.kglobalaccel.component.krohnkite
+Meta+T=org.kde.kglobalaccel,/component/krohnkite,resetLayout,org.kde.kglobalaccel.component.krohnkite
+Meta+Backslash=org.kde.kglobalaccel,/component/krohnkite,cycleLayout,org.kde.kglobalaccel.component.krohnkite
+KROHNRC
+
+# ── Reload KWin ───────────────────────────────────────────────────────────────
+if command -v qdbus6 &>/dev/null; then
+    qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || true
+elif command -v qdbus &>/dev/null; then
+    qdbus org.kde.KWin /KWin reconfigure 2>/dev/null || true
+fi
+
+echo "✓ KWin vim-style tiling configured"
+echo "  Enable Krohnkite in: System Settings → Window Management → KWin Scripts"
+echo "  Reload shortcuts with: qdbus6 org.kde.KWin /KWin reconfigure"

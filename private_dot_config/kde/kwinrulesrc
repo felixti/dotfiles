@@ -1,0 +1,38 @@
+# KWin Window Rules — sensible defaults
+# Windows that should float, stay on top, etc.
+
+[1]
+wmclass=org.kde.konsole
+wmclasscomplete=true
+float=true
+desktop=1
+above=false
+fullscreen=false
+
+[2]
+wmclass= dolphin
+wmclasscomplete=true
+float=true
+desktop=2
+above=false
+
+[3]
+wmclass= nemo
+wmclasscomplete=true
+float=true
+desktop=2
+
+[4]
+wmclass= Thunar
+wmclasscomplete=true
+float=true
+desktop=2
+
+[5]
+wmclass= nautilus
+wmclasscomplete=true
+float=false
+desktop=2
+
+[General]
+wmclassmatchmode=0

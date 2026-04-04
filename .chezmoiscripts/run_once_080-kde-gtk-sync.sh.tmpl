@@ -1,0 +1,64 @@
+#!/bin/bash
+{{ if ne .de "kde" }}exit 0{{ end }}
+# Install and configure GTK theme sync for KDE Plasma
+# Makes GTK apps (Firefox, VSCode, etc.) use Breeze/Catppuccin colors
+set -e
+
+echo "Setting up GTK theme sync for KDE..."
+
+# Install breeze-gtk (provides GTK2/GTK3 Breeze theme) and kde-gtk-config (sync daemon)
+{{- if eq .flavor "fedora-atomic" }}
+sudo rpm-ostree install breeze-gtk
+echo "Note: Reboot required after rpm-ostree install"
+{{- else if eq .flavor "arch" }}
+paru -S --noconfirm breeze-gtk kde-gtk-config 2>/dev/null || \
+    sudo pacman -S --noconfirm breeze-gtk kde-gtk-config
+{{- else if eq .flavor "debian" }}
+sudo apt install -y breeze-gtk kde-gtk-config
+{{- end }}
+
+# Set GTK theme to Breeze (dark) via kde-gtk-config
+# kde-gtk-config runs as a daemon and watches KDE's theme changes
+if command -v kde-gtk-config &>/dev/null; then
+    # Start the daemon if not already running
+    if ! pgrep -x kde-gtk-config &>/dev/null; then
+        kde-gtk-config &
+        echo "✓ kde-gtk-config daemon started"
+    fi
+fi
+
+# Also set via gsettings if available (for Qt apps using GTK config)
+if command -v gsettings &>/dev/null; then
+    # GTK 3.0 settings
+    gsettings set org.gnome.desktop.interface gtk-theme "Breeze-dark" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface icon-theme "breeze" 2>/dev/null || true
+fi
+
+# Write a GTK settings override (fallback)
+mkdir -p "$HOME/.config/gtk-3.0"
+cat > "$HOME/.config/gtk-3.0/settings.ini" << 'GTK3'
+[Settings]
+gtk-theme-name=Breeze-dark
+gtk-icon-theme-name=breeze
+gtk-font-name=Sans 10
+gtk-application-prefer-dark-theme=1
+GTK3
+
+mkdir -p "$HOME/.config/gtk-4.0"
+cat > "$HOME/.config/gtk-4.0/settings.ini" << 'GTK4'
+[Settings]
+gtk-theme-name=Breeze-dark
+gtk-icon-theme-name=breeze
+gtk-font-name=Sans 10
+gtk-application-prefer-dark-theme=1
+GTK4
+
+# Symlink kdeglobals to ensure GTK apps see the theme
+if [ -f "$HOME/.config/kdeglobals" ]; then
+    # Already handled by kdeglobals in the source tree
+    echo "kdeglobals present"
+fi
+
+echo "✓ GTK theme set to Breeze-dark"
+echo "  For full sync: System Settings → Application Style → GNOME Application Style → Breeze"
+echo "  Log out and back in for kde-gtk-config daemon to fully activate"

@@ -1,0 +1,42 @@
+# KDE Global Settings — Catppuccin + defaults
+
+[General]
+ColorScheme=Catppuccin-Mocha-Mauve
+Font=JetBrains Mono,10,-1,5,50,0,0,0,0,0
+MenuFont=Noto Sans,10,-1,5,50,0,0,0,0,0
+SmallFont=Noto Sans,8,-1,5,50,0,0,0,0,0
+ToolBarFont=Noto Sans,10,-1,5,50,0,0,0,0,0
+
+[KDE Action Restrictions][$i]
+_action=org.kde.klipper
+_action=org.kde.konqueror
+
+[ktip]
+KTipOnStartup=false
+
+[KFileDialog Settings]
+Recent URLs[$i]=file:///var/home/felix-powerhouse/Documents,file:///var/home/felix-powerhouse/Downloads
+
+[KDE URL Handler]
+ftp=firefox %u
+http=firefox %u
+https=firefox %u
+
+[Konsole]
+Shell=/bin/zsh
+KDE_SU_SHELL=/bin/zsh
+ShowTerminalsOnTop=true
+
+[KWin]
+NumBlockCheat=1,2,3,4
+KWinModuleTesting=false
+
+[KDE]
+SingleClick=false
+DoubleClickInterval=400
+StartupNotify=true
+ResourceSelectionModifier=Alt
+ChangeCursorOnMouseMove=true
+KDE_PRINTING=default
+KDE/printerListCommand=lpstat
+KDE/printerRuleListCommand=lpoptions

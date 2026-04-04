@@ -1,14 +1,53 @@
 #!/bin/bash
 {{ if ne .de "kde" }}exit 0{{ end }}
-# Install Catppuccin Mocha theme for KDE Plasma
+# Install and apply Catppuccin Mocha theme for KDE Plasma
 set -e
 
-echo "Installing Catppuccin Mocha for KDE..."
+FLAVOR="mocha"
+ACCENT="mauve"
 
-{{- if eq .flavor "arch" }}
-paru -S --needed --noconfirm catppuccin-gtk-theme-mocha kvantum-theme-catppuccin-git
-{{- else if eq .flavor "fedora-atomic" }}
-flatpak install -y flathub org.kde.KStyle.Kvantum
-{{- end }}
+echo "Installing Catppuccin $FLAVOR for KDE Plasma..."
 
-echo "✓ KDE Catppuccin installed — apply via System Settings > Appearance"
+CATPPuccIN_DIR="/tmp/catppuccin-kde"
+
+# Clone official repo (all distros)
+if [ ! -d "$HOME/.local/share/plasma/look-and-feel" ]; then
+    mkdir -p "$HOME/.local/share/plasma/look-and-feel"
+fi
+
+# Only clone if not already installed
+if [ ! -f "$HOME/.local/share/color-schemes/Catppuccin-${FLAVOR^}-${ACCENT}.colors" ]; then
+    rm -rf "$CATPPuccIN_DIR"
+    git clone --depth=1 https://github.com/catppuccin/kde "$CATPPuccIN_DIR"
+    cd "$CATPPuccIN_DIR"
+    ./install.sh --theme "$FLAVOR" --accent "$ACCENT" --prefix "$HOME/.local"
+    cd /tmp
+    rm -rf "$CATPPuccIN_DIR"
+else
+    echo "Catppuccin already installed, skipping clone"
+fi
+
+# Apply color scheme
+if command -v plasma-apply-colorscheme &>/dev/null; then
+    plasma-apply-colorscheme "Catppuccin-${FLAVOR^}-${ACCENT}.colors" 2>/dev/null || true
+fi
+
+# Apply full look-and-feel
+if command -v plasma-apply-lookandfeel &>/dev/null; then
+    for lf in "$HOME/.local/share/plasma/look-and-feel/"*/; do
+        [ -d "$lf" ] || continue
+        name=$(basename "$lf")
+        echo "Applying look-and-feel: $name"
+        plasma-apply-lookandfeel --apply "$name" 2>/dev/null && break || true
+    done
+fi
+
+# Set Breeze window decoration and reload KWin
+if command -v kwriteconfig5 &>/dev/null; then
+    kwriteconfig5 --file ~/.config/kwinrc --group General --key PluginLibraryKey=Breeze
+    qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || \
+    qdbus org.kde.KWin /KWin reconfigure 2>/dev/null || true
+fi
+
+echo "✓ Catppuccin $FLAVOR theme applied"
+echo "  Log out and back in, or run: kquitapp6 plasmashell && kstart plasmashell"

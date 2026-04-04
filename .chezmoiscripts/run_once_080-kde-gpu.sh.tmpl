@@ -1,0 +1,99 @@
+#!/bin/bash
+{{ if ne .de "kde" }}exit 0{{ end }}
+# Install AMD GPU drivers (ROCm, Vulkan) for KDE Plasma
+# Handles: fedora-atomic, arch, cachyos, debian
+set -e
+
+echo "Setting up AMD GPU drivers..."
+
+# Detect GPU vendor
+GPU_INFO=$(lspci 2>/dev/null | grep -i "vga\|display\|radeon\|amd" || echo "")
+AMD_GPU=false
+NVIDIA_GPU=false
+
+if echo "$GPU_INFO" | grep -qi "amd\|radeon"; then
+    AMD_GPU=true
+    echo "AMD GPU detected"
+elif echo "$GPU_INFO" | grep -qi "nvidia"; then
+    NVIDIA_GPU=true
+    echo "NVIDIA GPU detected — this script handles AMD only"
+    exit 0
+fi
+
+$AMD_GPU || exit 0
+
+# ── Fedora Atomic ─────────────────────────────────────────────────────────────
+{{- if eq .flavor "fedora-atomic" }}
+echo "Installing AMD GPU drivers on Fedora Atomic..."
+
+# Check if already installed
+if command -v clinfo &>/dev/null && clinfo 2>/dev/null | grep -qi "AMD"; then
+    echo "AMD drivers already present"
+else
+    echo "Layering AMD GPU packages via rpm-ostree..."
+    sudo rpm-ostree install rocm-opencl rocm-opencl-devel clinfo
+    echo "✓ Reboot required after rpm-ostree install"
+fi
+{{- end }}
+
+# ── Arch / CachyOS ─────────────────────────────────────────────────────────────
+{{- if eq .flavor "arch" }}
+echo "Installing AMD GPU drivers on Arch/CachyOS..."
+
+# CachyOS has chwd — auto-detects and installs correct AMD driver
+if command -v chwd &>/dev/null; then
+    echo "Using CachyOS chwd for automatic GPU setup..."
+    sudo chwd -a
+    echo "✓ chwd configured AMD GPU"
+else
+    echo "Standard Arch AMD setup..."
+
+    # ROCm OpenCL runtime
+    if ! pacman -Q rocm-opencl-runtime &>/dev/null; then
+        paru -S --noconfirm rocm-opencl-runtime 2>/dev/null || \
+        sudo pacman -S --noconfirm rocm-opencl-runtime
+    fi
+
+    # Vulkan layers
+    paru -S --noconfirm amdvlk 2>/dev/null || \
+    sudo pacman -S --noconfirm amdvlk 2>/dev/null || true
+
+    # clinfo for verification
+    paru -S --noconfirm clinfo 2>/dev/null || \
+    sudo pacman -S --noconfirm clinfo
+fi
+
+# Verify installation
+if command -v clinfo &>/dev/null; then
+    echo ""
+    echo "Verifying AMD GPU (clinfo):"
+    clinfo 2>/dev/null | grep "GPU" | head -3 || echo "  AMD GPU found"
+fi
+{{- end }}
+
+# ── Debian / Ubuntu ─────────────────────────────────────────────────────────────
+{{- if eq .flavor "debian" }}
+echo "Installing AMD GPU drivers on Debian..."
+
+# AMD ROCm from official repo
+# See: https://docs.amd.com/en/latest/deploy/linux/install-data.html
+if ! command -v clinfo &>/dev/null; then
+    echo "Adding AMD ROCm repository..."
+    wget -qO - https://repo.radeon.com/rocm/rocm.gpg.key | sudo tee /etc/apt/trusted.gpg.d/rocm.gpg.key >/dev/null
+    # Check latest ROCm version for Debian
+    echo "deb [arch=amd64] https://repo.radeon.com/rocm/apt/debian/ ubuntu main" | \
+        sudo tee /etc/apt/sources.list.d/rocm.list >/dev/null
+    sudo apt update
+    sudo apt install -y rocm-opencl-runtime clinfo
+fi
+
+if command -v clinfo &>/dev/null; then
+    echo ""
+    echo "Verifying AMD GPU:"
+    clinfo 2>/dev/null | grep "GPU" | head -3 || echo "  AMD GPU found"
+fi
+{{- end }}
+
+echo "✓ AMD GPU driver setup complete"
+echo "  Verify with: clinfo | grep AMD"
+echo "  For compute (AI): also install rocm-smi"
