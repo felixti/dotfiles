@@ -57,3 +57,13 @@ chsh -s "$ZSH_PATH"
 
 echo "✓ Default shell set to zsh"
 echo "  Log out and back in for the change to take effect"
+
+# --- Verify shell change persisted ---
+# Re-check to ensure the change actually took effect (important for Fedora Atomic)
+FINAL_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
+if [ "$FINAL_SHELL" != "$ZSH_PATH" ]; then
+    echo "ERROR: Shell change did not persist!"
+    echo "       Expected: $ZSH_PATH"
+    echo "       Got: $FINAL_SHELL"
+    exit 1
+fi
