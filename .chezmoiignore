@@ -3,6 +3,7 @@
 docs
 secrets.example.toml
 README.md
+AGENTS.md
 CLAUDE.md
 
 # DE: GNOME-specific configs
