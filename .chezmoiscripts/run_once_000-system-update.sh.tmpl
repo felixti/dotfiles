@@ -6,8 +6,8 @@ set -euo pipefail
 
 echo "Installing update script..."
 mkdir -p "$HOME/.local/bin"
-install -m 755 "$HOME/dotfiles/bin/update.sh" "$HOME/.local/bin/update"
-echo "✓ Update script installed to ~/.local/bin/update"
+install -m 755 "{{ .chezmoi.sourceDir }}/bin/update.sh" "$HOME/.bin/update"
+echo "✓ Update script installed to ~/.bin/update"
 
 echo "Running initial system update..."
-"$HOME/.local/bin/update"
+"$HOME/.bin/update"
