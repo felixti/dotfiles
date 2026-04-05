@@ -68,3 +68,8 @@ alias srv='z ~/powerhouse/services'
 # ============================================
 alias fm='yy'  # yazi with cd-on-quit
 alias zz='_zoxide_hook_and_ls'  # z + auto-ls
+
+# ============================================
+# SYSTEM UPDATE
+# ============================================
+alias update='~/.local/bin/update'
