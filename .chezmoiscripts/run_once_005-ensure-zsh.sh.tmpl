@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+{{ if eq .chezmoi.os "darwin" }}exit 0{{ end }}
+# Ensure zsh is installed and set as the default login shell
+set -euo pipefail
+
+# --- Install zsh if not present ---
+if ! command -v zsh &>/dev/null; then
+{{ if eq .flavor "fedora-atomic" }}
+    echo "ERROR: zsh is not installed and cannot be added via rpm-ostree in a run_once script."
+    echo "       Layer it manually: rpm-ostree install zsh && systemctl reboot"
+    exit 1
+{{ else if eq .flavor "arch" }}
+    echo "Installing zsh..."
+    sudo pacman -S --noconfirm zsh
+{{ else if eq .flavor "debian" }}
+    echo "Installing zsh..."
+    sudo apt install -y zsh
+{{ else }}
+    echo "ERROR: unsupported flavor for zsh install"
+    exit 1
+{{ end }}
+fi
+
+ZSH_PATH="$(command -v zsh)"
+echo "zsh found at $ZSH_PATH"
+
+# --- Ensure zsh is in /etc/shells ---
+if ! grep -qx "$ZSH_PATH" /etc/shells 2>/dev/null; then
+    echo "Adding $ZSH_PATH to /etc/shells..."
+    echo "$ZSH_PATH" | sudo tee -a /etc/shells >/dev/null
+fi
+
+# --- Check current login shell ---
+CURRENT_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
+if [ "$CURRENT_SHELL" = "$ZSH_PATH" ]; then
+    echo "✓ zsh is already the default shell"
+    exit 0
+fi
+
+# --- Set zsh as default shell ---
+echo "Changing default shell from $CURRENT_SHELL to $ZSH_PATH..."
+{{ if eq .flavor "fedora-atomic" }}
+sudo usermod -s "$ZSH_PATH" "$USER"
+{{ else }}
+chsh -s "$ZSH_PATH"
+{{ end }}
+
+echo "✓ Default shell set to zsh"
+echo "  Log out and back in for the change to take effect"
