@@ -3,10 +3,10 @@
 # Install and apply Catppuccin Mocha theme for KDE Plasma
 set -euo pipefail
 
-FLAVOR="mocha"
-ACCENT="mauve"
+FLAVOR=1      # 1=Mocha, 2=Macchiato, 3=Frappé, 4=Latte
+ACCENT=4      # 1=Rosewater, 2=Flamingo, 3=Pink, 4=Mauve, 5=Red, etc
 
-echo "Installing Catppuccin $FLAVOR for KDE Plasma..."
+echo "Installing Catppuccin Mocha (flavor $FLAVOR, accent $ACCENT) for KDE Plasma..."
 
 CATPPuccIN_DIR="/tmp/catppuccin-kde"
 
@@ -15,21 +15,21 @@ if [ ! -d "$HOME/.local/share/plasma/look-and-feel" ]; then
     mkdir -p "$HOME/.local/share/plasma/look-and-feel"
 fi
 
-# Only clone if not already installed
-if [ ! -f "$HOME/.local/share/color-schemes/Catppuccin-${FLAVOR^}-${ACCENT}.colors" ]; then
+# Only clone if not already installed (check for Mocha-Mauve theme)
+if [ ! -f "$HOME/.local/share/color-schemes/Catppuccin-Mocha-Mauve.colors" ]; then
     rm -rf "$CATPPuccIN_DIR"
     git clone --depth=1 https://github.com/catppuccin/kde "$CATPPuccIN_DIR"
     cd "$CATPPuccIN_DIR"
-    ./install.sh --theme "$FLAVOR" --accent "$ACCENT" --prefix "$HOME/.local"
+    ./install.sh "$FLAVOR" "$ACCENT" --prefix "$HOME/.local"
     cd /tmp
     rm -rf "$CATPPuccIN_DIR"
 else
     echo "Catppuccin already installed, skipping clone"
 fi
 
-# Apply color scheme
+# Apply color scheme (generated file name uses accent name)
 if command -v plasma-apply-colorscheme &>/dev/null; then
-    plasma-apply-colorscheme "Catppuccin-${FLAVOR^}-${ACCENT}.colors" 2>/dev/null || true
+    plasma-apply-colorscheme "Catppuccin-Mocha-Mauve.colors" 2>/dev/null || true
 fi
 
 # Apply full look-and-feel
@@ -42,10 +42,10 @@ if command -v plasma-apply-lookandfeel &>/dev/null; then
     done
 fi
 
-# Set Breeze window decoration and reload KWin
-if command -v kwriteconfig5 &>/dev/null; then
-    kwriteconfig5 --file ~/.config/kwinrc --group General --key PluginLibraryKey=Breeze
-    qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || \
+# Reload KWin to apply changes
+if command -v qdbus6 &>/dev/null; then
+    qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || true
+elif command -v qdbus &>/dev/null; then
     qdbus org.kde.KWin /KWin reconfigure 2>/dev/null || true
 fi
 
