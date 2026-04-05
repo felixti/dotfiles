@@ -160,7 +160,7 @@ On macOS, `gh` stores credentials in the macOS Keychain. The `hosts.yml` approac
 
 ### AI agents
 
-AI coding agents that require Node.js: nvm is installed via `run_once_040-install-runtimes.sh`.
+AI coding agents (Claude Code, Codex, Kimi) are installed via `run_once_050-install-ai-agents.sh` using nvm/npm. They authenticate via OAuth subscription — no API keys required.
 
 ---
 

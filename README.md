@@ -20,7 +20,9 @@ The wizard asks for:
 - **Desktop environment** — `gnome` | `kde` | `hyprland` | `none`
 - **File manager** — `yazi` (TUI) | `nemo` (GUI, Catppuccin-styled)
 - **Git name + email**
-- **API keys** (blank to skip): Anthropic, OpenAI, Kimi, Unsplash
+- **Unsplash API key** (blank to skip) — for wallpaper-fetch
+
+AI tools (Claude Code, Codex, Kimi) authenticate via OAuth subscription — no API keys needed.
 
 ---
 
@@ -204,17 +206,21 @@ fm                 # yazi (TUI file manager)
 yy                 # yazi with auto cd-on-quit
 lt                 # eza tree
 grep               # ripgrep (smart case, follows, hidden)
+ts                 # tailscale
+tsw                # tmux session switcher (fzf)
+lg                 # lazygit
 update             # ~/.local/bin/update — all layers
 ```
 
 ---
 
-## Adding a new secret
+## Adding a new template variable
 
-1. Add key to `secrets.example.toml` (commit this)
-2. Add key + value to `~/.config/chezmoi/chezmoi.toml` (never commit)
-3. Reference in a template: `{{ .newApiKey }}`
-4. `chezmoi apply`
+1. Add prompt to `.chezmoi.toml.tmpl` and its `[data]` block
+2. Add to `secrets.example.toml` with a comment (commit this)
+3. Add real value to `~/.config/chezmoi/chezmoi.toml` (never commit)
+4. Reference in templates: `{{ .varName }}`
+5. `chezmoi apply`
 
 ---
 
@@ -222,22 +228,22 @@ update             # ~/.local/bin/update — all layers
 
 ```
 bin/
-└── update.sh                 # Unified update script (all layers)
+└── update.sh.tmpl            # Unified update script (all layers)
 
-dot_config/zsh/               # zsh config (main.zsh, aliases, completions)
-private_dot_config/zsh/       # private: env.zsh, tools.zsh (API keys, PATH)
+private_dot_config/zsh/       # Modular zsh config (env, aliases, functions, tools, tmux, starship)
+  └── completions/            # Shell completions (bat, eza, fd, rg, tailscale, yazi)
 
-dot_config/tmux/              # tmux + catppuccin theme
-dot_config/nvim/              # AstroNvim
-dot_config/ghostty/           # Ghostty terminal
-dot_config/kitty/             # Kitty terminal
-dot_config/starship/           # Starship prompt themes
-dot_config/yazi/               # Yazi file manager
-dot_config/television/         # television fuzzy TUI
-dot_config/btop/              # btop
-dot_config/glow/              # glow markdown reader
-dot_config/thefuck/           # thefuck
-dot_config/gh/                # GitHub CLI
+private_dot_config/tmux/      # tmux + Catppuccin theme
+private_dot_config/nvim/      # AstroNvim v4
+private_dot_config/ghostty/   # Ghostty terminal
+private_dot_config/kitty/     # Kitty terminal
+private_dot_config/starship/  # 3 Starship prompt themes (minimal, developer, cyber)
+private_dot_config/yazi/      # Yazi file manager
+private_dot_config/television/ # television fuzzy TUI
+private_dot_config/btop/      # btop
+private_dot_config/glow/      # glow markdown reader
+private_dot_config/thefuck/   # thefuck
+private_dot_config/gh/        # GitHub CLI
 
 # DE-specific (guarded by .chezmoiignore — only applied to matching DE)
 private_dot_config/dconf/     # GNOME: dconf settings dump
@@ -249,15 +255,16 @@ private_dot_config/waybar/    # Hyprland: waybar status bar
 private_dot_config/wofi/      # Hyprland: wofi app launcher
 private_dot_config/kde/       # KDE: kwinrc, kdeglobals, kwinrulesrc
 private_dot_config/sddm/      # KDE: SDDM greeter (HyDE sddm-hyprland)
+private_dot_config/nemo/      # Nemo: Catppuccin CSS (guarded by fileManager)
 ```
 
 ---
 
 ## What's NOT tracked
 
+- `~/.config/chezmoi/chezmoi.toml` — real template variable values (secrets)
 - `~/.config/gh/hosts.yml` — GitHub tokens
 - `~/.ssh/` — SSH keys
-- `~/.claude.json` — session metadata (rendered from template at apply time)
 - `~/.zsh_history` — personal shell history
 
 ---
