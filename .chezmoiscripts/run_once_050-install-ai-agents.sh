@@ -10,6 +10,13 @@ else
     exit 1
 fi
 
+# Install Node LTS if not present (nvm install doesn't auto-install node)
+if ! command -v node &>/dev/null; then
+    echo "Installing Node LTS via nvm..."
+    nvm install --lts
+    nvm use --lts
+fi
+
 if ! command -v claude &>/dev/null; then
     echo "Installing Claude Code..."
     npm install -g @anthropic-ai/claude-code
