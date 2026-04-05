@@ -281,6 +281,30 @@ GTK app theme is then set via **System Settings → Application Style → GNOME 
 
 ---
 
+## Day-to-day Updates
+
+The unified `update` command (aliased from `~/.local/bin/update`) updates all layers at once:
+
+```bash
+update   # chezmoi + brew + OS + runtimes
+```
+
+**Fedora Atomic:** uses `ujust update` (also updates brew, distroboxes, and flatpaks).
+
+**Arch:** uses `paru -Syu`. Always refresh `archlinux-keyring` first if updating the keyring:
+```bash
+sudo pacman -Sy archlinux-keyring && paru -Syu
+```
+
+**Debian/Ubuntu:**
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+**macOS:** Homebrew updates are handled by `brew update && brew upgrade` in the update script.
+
+---
+
 ## GPU Quick Reference
 
 | GPU | Fedora Atomic | Arch / CachyOS | Debian / Ubuntu |
