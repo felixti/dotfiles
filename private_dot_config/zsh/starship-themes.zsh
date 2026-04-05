@@ -53,5 +53,7 @@ alias theme-cyber='starship-theme cyber'
 
 # Initialize with developer theme by default if no starship.toml exists
 if [ ! -f "$HOME/.config/starship.toml" ]; then
-    theme_developer 2>/dev/null || true
+    if [ -f "${STARSHIP_DIR}/developer.toml" ]; then
+        theme_developer
+    fi
 fi

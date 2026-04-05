@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Install language runtime managers
-set -e
+set -euo pipefail
 
 if [ ! -d "$HOME/.nvm" ]; then
     echo "Installing nvm..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/HEAD/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
     echo "✓ nvm installed"
 fi
 

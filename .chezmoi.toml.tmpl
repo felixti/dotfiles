@@ -1,18 +1,14 @@
-{{- $flavor    := promptStringOnce . "flavor"          "Distro flavor (fedora-atomic/arch/debian/macos)" -}}
-{{- $de        := promptStringOnce . "de"              "Desktop env (gnome/kde/hyprland/none)" -}}
-{{- $fileManager := promptStringOnce . "fileManager" "File manager (yazi/nemo)" -}}
-{{- $name      := promptStringOnce . "gitName"         "Git full name" -}}
-{{- $email     := promptStringOnce . "gitEmail"        "Git email" -}}
-{{- $anthropic := promptStringOnce . "anthropicApiKey" "Anthropic API key (blank to skip)" -}}
-{{- $openai    := promptStringOnce . "openaiApiKey"    "OpenAI API key (blank to skip)" -}}
-{{- $kimi      := promptStringOnce . "kimiApiKey"      "Kimi API key (blank to skip)" -}}
+{{- $flavor      := promptStringOnce . "flavor"          "Distro flavor (fedora-atomic/arch/debian/macos)" -}}
+{{- $de          := promptStringOnce . "de"              "Desktop env (gnome/kde/hyprland/none)" -}}
+{{- $fileManager := promptStringOnce . "fileManager"     "File manager (yazi/nemo)" -}}
+{{- $name        := promptStringOnce . "gitName"         "Git full name" -}}
+{{- $email       := promptStringOnce . "gitEmail"        "Git email" -}}
+{{- $unsplash    := promptStringOnce . "unsplashApiKey"  "Unsplash API key (blank to skip)" -}}
 
 [data]
-  flavor          = {{ $flavor    | quote }}
-  de              = {{ $de        | quote }}
-  fileManager     = {{ $fileManager | quote }}
-  gitName         = {{ $name      | quote }}
-  gitEmail        = {{ $email     | quote }}
-  anthropicApiKey = {{ $anthropic | quote }}
-  openaiApiKey    = {{ $openai    | quote }}
-  kimiApiKey      = {{ $kimi      | quote }}
+  flavor         = {{ $flavor      | quote }}
+  de             = {{ $de          | quote }}
+  fileManager    = {{ $fileManager | quote }}
+  gitName        = {{ $name        | quote }}
+  gitEmail       = {{ $email       | quote }}
+  unsplashApiKey = {{ $unsplash    | quote }}

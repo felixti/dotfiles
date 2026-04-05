@@ -45,7 +45,7 @@ tswitch() {
     session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --exit-0) &&
     tmux switch-client -t "$session"
 }
-alias ts='tswitch'
+alias tsw='tswitch'
 
 # Create or attach to named session
 tmux-dev() {

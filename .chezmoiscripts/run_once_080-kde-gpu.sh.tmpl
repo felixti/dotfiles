@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if ne .de "kde" }}exit 0{{ end }}
 # Install AMD GPU drivers (ROCm, Vulkan) for KDE Plasma
 # Handles: fedora-atomic, arch, cachyos, debian
-set -e
+set -euo pipefail
 
 echo "Setting up AMD GPU drivers..."
 

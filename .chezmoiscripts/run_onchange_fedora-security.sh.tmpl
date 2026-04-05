@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if ne .flavor "fedora-atomic" }}exit 0{{ end }}
 # Security hardening for Fedora Atomic
 # Re-runs whenever this script changes (run_onchange_ prefix)
@@ -6,7 +6,7 @@
 # Security Hardening Script for Fedora 43 Atomic (Bluefin)
 # Configures firewall, fail2ban, and SSH hardening
 
-set -e
+set -euo pipefail
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -147,7 +147,7 @@ EOF
         --restart unless-stopped \
         -v /var/log:/var/log:ro \
         -v ~/.config/fail2ban:/data \
-        crazymax/fail2ban:latest 2>/dev/null; then
+        crazymax/fail2ban:1.1.0 2>/dev/null; then
         
         echo -e "${GREEN}✓ Fail2ban container started${NC}"
         

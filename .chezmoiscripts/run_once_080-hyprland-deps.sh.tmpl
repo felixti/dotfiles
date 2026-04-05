@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if ne .de "hyprland" }}exit 0{{ end }}
 {{ if eq .chezmoi.os "darwin" }}exit 0{{ end }}
 # Install Hyprland ecosystem dependencies
-set -e
+set -euo pipefail
 
 {{- if eq .flavor "arch" }}
 # Base hyprland from main repo

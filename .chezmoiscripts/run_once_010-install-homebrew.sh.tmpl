@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Install Homebrew if not present
-set -e
+set -euo pipefail
 command -v brew &>/dev/null && exit 0
 
 # Pre-install build dependencies (Homebrew needs these on Linux)

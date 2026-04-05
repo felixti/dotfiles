@@ -1,9 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Install AI coding agents via npm
-set -e
+set -euo pipefail
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    source "$NVM_DIR/nvm.sh"
+else
+    echo "ERROR: nvm not found at $NVM_DIR — run install-runtimes first"
+    exit 1
+fi
 
 if ! command -v claude &>/dev/null; then
     echo "Installing Claude Code..."

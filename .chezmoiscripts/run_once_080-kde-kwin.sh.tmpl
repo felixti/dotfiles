@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if ne .de "kde" }}exit 0{{ end }}
 # Install Krohnkite tiling + apply vim-style KWin keybinds
 # Works on: fedora-atomic, arch, debian
-set -e
+set -euo pipefail
 
 echo "Setting up KWin vim-style tiling..."
 

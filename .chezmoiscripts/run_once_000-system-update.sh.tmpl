@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if eq .chezmoi.os "darwin" }}exit 0{{ end }}
 # Install update script and run initial system update
 # Numbering 000- ensures it runs first, before all other run_once scripts
-set -e
+set -euo pipefail
 
 echo "Installing update script..."
 mkdir -p "$HOME/.local/bin"

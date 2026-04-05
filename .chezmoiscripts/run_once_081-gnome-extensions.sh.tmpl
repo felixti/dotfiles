@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if ne .de "gnome" }}exit 0{{ end }}
 # Install and configure GNOME extensions (tiling, pop-shell)
 # Migrated from Temp/configure-tiling-shell.sh
@@ -6,7 +6,7 @@
 # Tiling Shell Configuration for GNOME 49.5
 # Fixes common issues and sets up Vim-style keybindings
 
-set -e
+set -euo pipefail
 
 echo "🪟 Configuring Tiling Shell..."
 

@@ -5,8 +5,10 @@
     type = "git-repo"
     url = "https://github.com/mattmc3/antidote.git"
     refreshPeriod = "168h"
+    tag = "v1.9.8"
 
 [".tmux/plugins/tpm"]
     type = "git-repo"
     url = "https://github.com/tmux-plugins/tpm.git"
     refreshPeriod = "168h"
+    tag = "v3.1.0"

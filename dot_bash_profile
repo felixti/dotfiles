@@ -6,6 +6,3 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # User specific environment and startup programs
-
-# Added by LM Studio CLI tool (lms)
-export PATH="$PATH:/var/home/felix-powerhouse/.lmstudio/bin"

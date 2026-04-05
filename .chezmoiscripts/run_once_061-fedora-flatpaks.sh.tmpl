@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if and (ne .flavor "fedora-atomic") (ne .flavor "arch") (ne .flavor "debian") }}exit 0{{ end }}
-set -e
+set -euo pipefail
 
 # Install flatpak if not present (fedora-atomic has it natively)
 if ! command -v flatpak &>/dev/null; then

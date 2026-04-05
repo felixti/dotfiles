@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Install Rust-based tools via cargo
-set -e
+set -euo pipefail
 command -v cargo &>/dev/null || { echo "cargo not found, skipping"; exit 0; }
 
 if ! command -v yazi &>/dev/null; then

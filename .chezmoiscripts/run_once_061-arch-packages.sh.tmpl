@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if ne .flavor "arch" }}exit 0{{ end }}
 # Install core packages on Arch/CachyOS
-set -e
+set -euo pipefail
 
 PACMAN_PKGS=(
     git curl wget unzip zip

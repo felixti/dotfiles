@@ -29,3 +29,8 @@ README.md
 .config/kwinrulesrc
 .config/plasmarc
 {{ end }}
+
+# File manager: Nemo configs (only when nemo is selected)
+{{ if ne .fileManager "nemo" }}
+.config/nemo
+{{ end }}

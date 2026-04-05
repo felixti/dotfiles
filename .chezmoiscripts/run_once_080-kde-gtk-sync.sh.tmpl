@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if ne .de "kde" }}exit 0{{ end }}
 # Install and configure GTK theme sync for KDE Plasma
 # Makes GTK apps (Firefox, VSCode, etc.) use Breeze/Catppuccin colors
-set -e
+set -euo pipefail
 
 echo "Setting up GTK theme sync for KDE..."
 

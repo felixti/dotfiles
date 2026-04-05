@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if ne .flavor "fedora-atomic" }}exit 0{{ end }}
 # Install Tailscale on Fedora Atomic via rpm-ostree layering
-set -e
+set -euo pipefail
 
 command -v tailscale &>/dev/null && exit 0
 

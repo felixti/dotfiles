@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Install cross-platform CLI tools via Homebrew
-set -e
+set -euo pipefail
 
 {{- if eq .chezmoi.os "darwin" }}
 eval "$(/opt/homebrew/bin/brew shellenv)"

@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 {{ if ne .flavor "arch" }}exit 0{{ end }}
 # Install paru AUR helper (works for Arch Linux and CachyOS)
-set -e
+set -euo pipefail
 
 command -v paru &>/dev/null && exit 0
 
