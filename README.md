@@ -54,6 +54,7 @@ update
 - `run_once_050-install-ai-agents.sh` — opencode, codex, kimi-code
 - `run_once_060-fedora-tailscale.sh` — Tailscale
 - `run_once_061-fedora-flatpaks.sh` — VSCodium, Firefox, Discord
+- `run_once_005-ensure-zsh.sh` — ensures zsh is installed and set as default shell
 - `run_once_000-system-update.sh` — installs `update` command + runs it
 - `run_once_080-gnome-extensions.sh` — tiling shell + pop-shell
 - `run_once_080-gnome-catppuccin.sh` — Catppuccin Mocha theme
@@ -63,6 +64,7 @@ update
 
 | Task | Command |
 |---|---|
+| Log out and back in | Required for zsh to become your login shell (run_once_005) |
 | Apply GNOME dconf settings | `dconf load / < ~/.config/dconf/settings.ini` then log out/in |
 | GPU (AMD RX 6600) | `sudo rpm-ostree install rocm-opencl` then reboot |
 | GPU (NVIDIA) | Use Bluefin-Nvidia image or `ublue-update` |
@@ -97,6 +99,7 @@ update
 - `run_once_040-install-runtimes.sh`
 - `run_once_050-install-ai-agents.sh`
 - `run_once_060-arch-paru.sh` — installs paru
+- `run_once_005-ensure-zsh.sh` — ensures zsh is installed and set as default shell
 - `run_once_061-arch-packages.sh` — additional Arch packages
 - `run_once_061-fedora-flatpaks.sh` — Flatpaks (Flathub)
 - `run_once_000-system-update.sh`
@@ -106,6 +109,7 @@ update
 
 | Task | Command |
 |---|---|
+| Log out and back in | Required for zsh to become your login shell (run_once_005) |
 | Enable Krohnkite (KDE) | System Settings → Window Management → KWin Scripts → Krohnkite |
 | GPU (AMD on CachyOS) | `sudo chwd -a` — auto-detects and installs correct drivers |
 | GPU (AMD on Arch) | `paru -S rocm-opencl-runtime amdvlk` |
@@ -141,6 +145,7 @@ update
 - `run_once_030-install-cargo-tools.sh`
 - `run_once_040-install-runtimes.sh`
 - `run_once_050-install-ai-agents.sh`
+- `run_once_005-ensure-zsh.sh` — ensures zsh is installed and set as default shell
 - `run_once_061-fedora-flatpaks.sh` — installs flatpak + Flathub + apps
 - `run_once_000-system-update.sh`
 - DE-specific scripts
@@ -149,6 +154,7 @@ update
 
 | Task | Command |
 |---|---|
+| Log out and back in | Required for zsh to become your login shell (run_once_005) |
 | Flatpak theming | flatpaks pick up Catppuccin from `~/.themes` automatically |
 | GPU (AMD) | Install [ROCm from AMD's official repo](https://docs.amd.com/en/latest/deploy/linux/install-data.html) |
 | Hyprland (source build) | deps are installed automatically; Hyprland is built from source |
