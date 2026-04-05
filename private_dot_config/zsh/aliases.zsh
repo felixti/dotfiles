@@ -23,9 +23,11 @@ alias fdh='fd --hidden'
 
 # ripgrep (modern grep)
 alias grep='rg'
-alias rg='rg --smart-case --follow --hidden'
+alias rg='rg --smart-case'
 alias rgi='rg -i'
 alias rgf='rg --files-with-matches'
+alias rgh='rg --smart-case --hidden'
+alias rga='rg --smart-case --follow --hidden'
 
 # zoxide (smart cd replacement)
 alias cd='z'
