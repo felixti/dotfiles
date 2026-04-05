@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Unified update script — all package layers
+# Installed to ~/.local/bin/update
+set -e
+
+echo "═══════════════════════════════════════"
+echo "  System Update"
+echo "═══════════════════════════════════════"
+
+echo "→ Dotfiles..."
+chezmoi update
+
+echo "→ Homebrew..."
+brew update && brew upgrade
+
+echo "→ System packages..."
+{{- if eq .flavor "fedora-atomic" }}
+ujust update
+{{- else if eq .flavor "fedora" }}
+sudo dnf update -y
+{{- else if eq .flavor "arch" }}
+sudo pacman -Sy archlinux-keyring && paru -Syu --noconfirm
+{{- else if eq .flavor "debian" }}
+sudo apt update && sudo apt upgrade -y
+{{- end }}
+
+echo "→ Runtimes..."
+cargo install-update -a 2>/dev/null || true
+bun update --global 2>/dev/null || true
+pnpm update -g 2>/dev/null || true
+
+echo "═══════════════════════════════════════"
+echo "  ✓ All layers updated"
+echo "═══════════════════════════════════════"
