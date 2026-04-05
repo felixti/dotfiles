@@ -74,4 +74,4 @@ alias zz='_zoxide_hook_and_ls'  # z + auto-ls
 # ============================================
 # SYSTEM UPDATE
 # ============================================
-alias update='~/.local/bin/update'
+alias update='~/.bin/update'

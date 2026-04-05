@@ -1,64 +1,30 @@
 #!/usr/bin/env bash
 {{ if eq .chezmoi.os "darwin" }}exit 0{{ end }}
-# Install update script and run initial system update
+# Initial system update only (brew/cargo not installed yet)
 # Numbering 000- ensures it runs first, before all other run_once scripts
 set -euo pipefail
 
-echo "Installing update script..."
-mkdir -p "$HOME/.bin"
-
-# Write update script directly (avoids depending on a separate source file)
-cat > "$HOME/.bin/update" << 'UPDATE_SCRIPT'
-#!/usr/bin/env bash
-# Unified update script — all package layers
-set -e
-
 echo "═══════════════════════════════════════"
-echo "  System Update"
+echo "  Initial System Update"
 echo "═══════════════════════════════════════"
 
-echo "→ Dotfiles..."
-chezmoi update
-
-echo "→ Homebrew..."
-brew update && brew upgrade
-
-echo "→ System packages..."
-UPDATE_SCRIPT
-
-# Append platform-specific section using chezmoi template
+# Platform-specific system update only
 {{- if eq .flavor "fedora-atomic" }}
-cat >> "$HOME/.bin/update" << 'EOF'
+echo "→ Fedora Atomic: ujust update..."
 ujust update
-EOF
 {{- else if eq .flavor "fedora" }}
-cat >> "$HOME/.bin/update" << 'EOF'
+echo "→ Fedora: dnf update..."
 sudo dnf update -y
-EOF
 {{- else if eq .flavor "arch" }}
-cat >> "$HOME/.bin/update" << 'EOF'
+echo "→ Arch: pacman keyring + paru..."
 sudo pacman -Sy archlinux-keyring && paru -Syu --noconfirm
-EOF
 {{- else if eq .flavor "debian" }}
-cat >> "$HOME/.bin/update" << 'EOF'
+echo "→ Debian/Ubuntu: apt update..."
 sudo apt update && sudo apt upgrade -y
-EOF
 {{- end }}
 
-# Append runtimes section
-cat >> "$HOME/.bin/update" << 'EOF'
-echo "→ Runtimes..."
-cargo install-update -a 2>/dev/null || true
-bun update --global 2>/dev/null || true
-pnpm update -g 2>/dev/null || true
-
 echo "═══════════════════════════════════════"
-echo "  ✓ All layers updated"
+echo "  ✓ System packages updated"
 echo "═══════════════════════════════════════"
-EOF
-
-chmod +x "$HOME/.bin/update"
-echo "✓ Update script installed to ~/.bin/update"
-
-echo "Running initial system update..."
-"$HOME/.bin/update"
+echo ""
+echo "Note: Run 'update' after bootstrap completes for full update"
