@@ -1,4 +1,4 @@
-# CLAUDE.md — LLM Operating Guide for felixti/dotfiles
+# AGENTS.md — LLM Operating Guide for felixti/dotfiles
 
 ## What This Repo Is
 
@@ -153,6 +153,63 @@ For scripts: they run via `chezmoi apply` automatically. To re-run a `run_once_`
 chezmoi state delete-bucket --bucket=scriptState
 chezmoi apply
 ```
+
+## Bootstrap Quick Reference
+
+### Fedora Aurora (fedora-atomic + kde)
+```bash
+ujust update                                    # update base OS first
+sh -c "$(curl -fsLS get.chezmoi.io)"           # install chezmoi
+chezmoi init --apply gh:felixti/dotfiles       # select: fedora-atomic, kde, yazi
+```
+Manual step after: enable Krohnkite in System Settings → KWin Scripts.
+
+### CachyOS Hyprland (arch + hyprland)
+```bash
+sudo pacman -Sy archlinux-keyring              # refresh keyring
+sh -c "$(curl -fsLS get.chezmoi.io)"           # install chezmoi
+chezmoi init --apply gh:felixti/dotfiles       # select: arch, hyprland, nemo
+```
+GPU auto-setup: `sudo chwd -a` (CachyOS detects AMD/NVIDIA automatically).
+
+### macOS
+```bash
+sh -c "$(curl -fsLS get.chezmoi.io)"           # install chezmoi
+chezmoi init --apply gh:felixti/dotfiles       # select: macos, none, yazi
+```
+Lightest path — no DE scripts, no flatpaks, no system update.
+
+### After Bootstrap (all platforms)
+```bash
+update                                          # unified update: dotfiles + brew + OS + runtimes
+```
+
+## Troubleshooting
+
+### Re-run failed setup scripts
+
+`run_once_` scripts execute exactly once. If a script fails mid-bootstrap (network issue, etc.), chezmoi marks it as "done" and won't retry. To re-trigger:
+```bash
+chezmoi state delete-bucket --bucket=scriptState
+chezmoi apply
+```
+
+### Script fails with "unbound variable"
+
+All scripts use `set -euo pipefail`. If a variable is unset, the script exits. Fix: use `${VAR:-default}` for optional variables.
+
+**Exception:** `run_once_080-gnome-catppuccin.sh.tmpl` intentionally does NOT use `set -e` — it handles errors manually with `|| true`.
+
+### chezmoi apply skips expected files
+
+Check `.chezmoiignore` — files are conditionally excluded based on `de` and `fileManager`. Verify your settings:
+```bash
+chezmoi data | grep -E "de|flavor|fileManager"
+```
+
+### Change bootstrap answers after init
+
+Edit `~/.config/chezmoi/chezmoi.toml` directly, then `chezmoi apply`.
 
 ## File Map
 

@@ -269,6 +269,29 @@ private_dot_config/nemo/      # Nemo: Catppuccin CSS (guarded by fileManager)
 
 ---
 
+## Troubleshooting
+
+### Re-run failed setup scripts
+
+`run_once_` scripts execute exactly once. If one fails mid-bootstrap (network issue, etc.), chezmoi marks it as done. To re-trigger:
+```bash
+chezmoi state delete-bucket --bucket=scriptState
+chezmoi apply
+```
+
+### chezmoi apply skips expected files
+
+Files are conditionally excluded based on `de` and `fileManager`. Check your settings:
+```bash
+chezmoi data | grep -E "de|flavor|fileManager"
+```
+
+### Change bootstrap answers after init
+
+Edit `~/.config/chezmoi/chezmoi.toml` directly, then `chezmoi apply`.
+
+---
+
 ## Platform notes
 
 Detailed per-distro hints are in [docs/PLATFORMS.md](docs/PLATFORMS.md):
