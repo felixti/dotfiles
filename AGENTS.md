@@ -39,6 +39,7 @@ Chezmoi-managed dotfiles for reproducible multi-platform, multi-DE machine setup
 
 ```
 000  — system update (runs first)
+005  — ensure zsh installed + default shell
 010  — homebrew
 020  — CLI tools (brew)
 030  — cargo tools
