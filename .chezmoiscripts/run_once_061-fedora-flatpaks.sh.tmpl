@@ -2,7 +2,7 @@
 {{ if and (ne .flavor "fedora-atomic") (ne .flavor "arch") (ne .flavor "debian") }}exit 0{{ end }}
 set -euo pipefail
 
-# Install flatpak if not present (fedora-atomic has it natively)
+# Install flatpak if not present (fedora-atomic/fedora have it natively)
 if ! command -v flatpak &>/dev/null; then
     echo "Installing flatpak..."
     {{- if eq .flavor "arch" }}
@@ -15,9 +15,8 @@ fi
 flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 FLATPAKS=(
-    com.vscodium.codium
-    org.mozilla.firefox
-    com.discordapp.Discord
+    com.spotify.Client
+    app.zen_browser.zen
 )
 
 for app in "${FLATPAKS[@]}"; do
@@ -26,4 +25,4 @@ for app in "${FLATPAKS[@]}"; do
     flatpak install --user -y flathub "$app"
 done
 
-echo "✓ Flatpaks installed"
+echo "✓ Flatpaks installed (Spotify, Zen Browser)"

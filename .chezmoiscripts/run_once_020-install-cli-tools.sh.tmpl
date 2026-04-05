@@ -2,11 +2,10 @@
 # Install cross-platform CLI tools via Homebrew
 set -euo pipefail
 
-{{- if eq .chezmoi.os "darwin" }}
-eval "$(/opt/homebrew/bin/brew shellenv)"
-{{- else }}
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-{{- end }}
+# Ensure brew is available (installed in 010)
+if ! command -v brew &>/dev/null; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv 2>/dev/null || /opt/homebrew/bin/brew shellenv)"
+fi
 
 TOOLS=(
     eza
@@ -24,6 +23,7 @@ TOOLS=(
     btop
     tmux
     neovim
+    yazi
 )
 
 for tool in "${TOOLS[@]}"; do

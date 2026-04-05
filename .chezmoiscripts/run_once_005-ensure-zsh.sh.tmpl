@@ -31,6 +31,9 @@ if [[ -z "$ZSH_PATH" ]]; then
 fi
 echo "zsh found at $ZSH_PATH"
 
+# --- Ensure ~/.bin exists (used by bin scripts) ---
+mkdir -p "$HOME/.bin"
+
 # --- Ensure zsh is in /etc/shells ---
 if ! grep -qx "$ZSH_PATH" /etc/shells 2>/dev/null; then
     echo "Adding $ZSH_PATH to /etc/shells..."

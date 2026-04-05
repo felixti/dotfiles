@@ -2,9 +2,25 @@
 # Install language runtime managers
 set -euo pipefail
 
+# Retry wrapper for critical downloads
+download_with_retry() {
+    local cmd="$1"
+    local desc="$2"
+    for i in {1..3}; do
+        echo "Attempting $desc (attempt $i)..."
+        if eval "$cmd"; then
+            return 0
+        fi
+        echo "$desc failed, retrying..."
+        sleep 2
+    done
+    echo "ERROR: $desc failed after 3 attempts"
+    return 1
+}
+
 if [ ! -d "$HOME/.nvm" ]; then
     echo "Installing nvm..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    download_with_retry 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash' "nvm installation"
     echo "✓ nvm installed"
 fi
 
@@ -16,7 +32,7 @@ fi
 
 if ! command -v bun &>/dev/null; then
     echo "Installing bun..."
-    curl -fsSL https://bun.sh/install | bash
+    download_with_retry 'curl -fsSL https://bun.sh/install | bash' "bun installation"
     echo "✓ bun installed"
 fi
 

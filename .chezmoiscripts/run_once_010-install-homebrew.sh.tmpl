@@ -3,6 +3,22 @@
 set -euo pipefail
 command -v brew &>/dev/null && exit 0
 
+# Retry wrapper for critical downloads
+download_with_retry() {
+    local cmd="$1"
+    local desc="$2"
+    for i in {1..3}; do
+        echo "Attempting $desc (attempt $i)..."
+        if eval "$cmd"; then
+            return 0
+        fi
+        echo "$desc failed, retrying..."
+        sleep 2
+    done
+    echo "ERROR: $desc failed after 3 attempts"
+    return 1
+}
+
 # Pre-install build dependencies (Homebrew needs these on Linux)
 {{- if eq .flavor "arch" }}
 echo "Installing build dependencies..."
@@ -13,7 +29,7 @@ sudo apt install -y build-essential curl git
 {{- end }}
 
 echo "Installing Homebrew..."
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+download_with_retry '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"' "Homebrew installation"
 
 {{- if eq .chezmoi.os "darwin" }}
 eval "$(/opt/homebrew/bin/brew shellenv)"
