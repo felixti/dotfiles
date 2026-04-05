@@ -9,7 +9,7 @@ Reproducible machine setup managed by [chezmoi](https://chezmoi.io).
 sh -c "$(curl -fsLS get.chezmoi.io)"
 
 # 2. Bootstrap (prompts for flavor, DE, identity, API keys)
-chezmoi init --apply gh:felixti/dotfiles
+chezmoi init --apply https://github.com/felixti/dotfiles
 
 # 3. Restart shell, then update everything
 update
@@ -40,7 +40,7 @@ ujust update
 sh -c "$(curl -fsLS get.chezmoi.io)"
 
 # Bootstrap (select fedora-atomic, then your DE)
-chezmoi init --apply gh:felixti/dotfiles
+chezmoi init --apply https://github.com/felixti/dotfiles
 
 # Restart shell, then run the unified update
 update
@@ -86,7 +86,7 @@ sh -c "$(curl -fsLS get.chezmoi.io)"
 git clone https://aur.archlinux.org/paru.git /tmp/paru && cd /tmp/paru && makepkg -si
 
 # Bootstrap (select arch, then your DE)
-chezmoi init --apply gh:felixti/dotfiles
+chezmoi init --apply https://github.com/felixti/dotfiles
 
 # Restart shell, then update
 update
@@ -133,7 +133,7 @@ sudo apt update && sudo apt install -y build-essential curl git
 sh -c "$(curl -fsLS get.chezmoi.io)"
 
 # Bootstrap (select debian, then your DE)
-chezmoi init --apply gh:felixti/dotfiles
+chezmoi init --apply https://github.com/felixti/dotfiles
 
 # Restart shell, then update
 update
@@ -170,7 +170,7 @@ update
 sh -c "$(curl -fsLS get.chezmoi.io)"
 
 # Bootstrap (select macos, then DE=none)
-chezmoi init --apply gh:felixti/dotfiles
+chezmoi init --apply https://github.com/felixti/dotfiles
 
 # Restart shell
 ```
