@@ -1,0 +1,13 @@
+#!/bin/bash
+{{ if eq .chezmoi.os "darwin" }}exit 0{{ end }}
+# Install update script and run initial system update
+# Numbering 000- ensures it runs first, before all other run_once scripts
+set -e
+
+echo "Installing update script..."
+mkdir -p "$HOME/.local/bin"
+install -m 755 "$HOME/dotfiles/bin/update.sh" "$HOME/.local/bin/update"
+echo "✓ Update script installed to ~/.local/bin/update"
+
+echo "Running initial system update..."
+"$HOME/.local/bin/update"
