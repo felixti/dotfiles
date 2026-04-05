@@ -12,7 +12,7 @@ if ! command -v flatpak &>/dev/null; then
     {{- end }}
 fi
 
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 FLATPAKS=(
     com.vscodium.codium
@@ -23,7 +23,7 @@ FLATPAKS=(
 for app in "${FLATPAKS[@]}"; do
     flatpak info "$app" &>/dev/null && continue
     echo "Installing $app..."
-    flatpak install -y flathub "$app"
+    flatpak install --user -y flathub "$app"
 done
 
 echo "✓ Flatpaks installed"
