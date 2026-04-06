@@ -33,6 +33,8 @@ CLAUDE.md
 .config/kglobalshortcutsrc
 {{ end }}
 
+# KDE shortcuts (kglobalshortcutsrc applies to all DEs when using KDE)
+
 # File manager: Nemo configs (only when nemo is selected)
 {{ if ne .fileManager "nemo" }}
 .config/nemo
