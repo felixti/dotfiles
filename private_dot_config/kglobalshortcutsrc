@@ -1,10 +1,13 @@
 # KDE Global Shortcuts
 # Lock screen and window management
+# Format: key=default,custom,description
 
 [ksmserver]
-Lock Session=Meta+Semicolon
+_k_friendly_name=Session Management
+Lock Session=Meta+L\tScreensaver,Meta+Semicolon,Lock Session
 
 [kwin]
+_k_friendly_name=KWin
 Window to Desktop 1=Meta+Shift+1
 Window to Desktop 2=Meta+Shift+2
 Window to Desktop 3=Meta+Shift+3
