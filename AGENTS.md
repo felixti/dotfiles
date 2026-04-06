@@ -246,6 +246,46 @@ Edit `~/.config/chezmoi/chezmoi.toml` directly, then `chezmoi apply`.
 | `private_dot_config/kde/` | KDE configs (kwinrc, kdeglobals) |
 | `docs/PLATFORMS.md` | Platform-specific notes and GPU reference |
 
+## Neovim 0.12 + nvim-treesitter Main Branch
+
+This configuration uses **nvim-treesitter's `main` branch** for Neovim 0.12 compatibility. The `main` branch is a complete rewrite that aligns with Neovim 0.12's breaking changes to the `iter_matches()` API.
+
+### Key Differences from Master Branch
+
+| Feature | Master (legacy) | Main (Neovim 0.12+) |
+|---------|-----------------|---------------------|
+| Setup | `require('nvim-treesitter.configs').setup({...})` | `require('nvim-treesitter').setup({})` |
+| Parser install | `ensure_installed = {...}` | `require('nvim-treesitter').install({...})` |
+| Highlight | `highlight = { enable = true }` | `vim.treesitter.start()` in autocmd |
+| Fold | Configured in setup | `vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'` |
+
+### Aerial.nvim Patch
+
+Aerial.nvim's treesitter backend requires a patch for Neovim 0.12 compatibility. The patch is applied automatically via:
+
+- Script: `.chezmoiscripts/run_onchange_nvim-aerial-patch.sh.tmpl`
+- Location: `~/.local/share/nvim/lazy/aerial.nvim/lua/aerial/backends/treesitter/init.lua`
+- Change: Handles `iter_matches()` returning lists instead of single nodes (line 67-72)
+
+### Requirements
+
+- **Neovim**: 0.12.0+ (nightly)
+- **tree-sitter-cli**: 0.26.1+ (must be installed via system package manager)
+- **C compiler**: gcc, clang, or MSVC
+
+### After chezmoi apply
+
+If nvim-treesitter throws errors after applying:
+
+```bash
+# Remove cached plugin to force fresh clone from main branch
+rm -rf ~/.local/share/nvim/lazy/nvim-treesitter
+rm -rf ~/.local/share/nvim/lazy/aerial.nvim
+
+# Restart Neovim - plugins will reinstall
+nvim
+```
+
 ## Do NOT
 
 - Commit real secrets to this repo — they belong in `~/.config/chezmoi/chezmoi.toml`
