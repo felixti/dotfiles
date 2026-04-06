@@ -1,0 +1,13 @@
+# KDE Global Shortcuts
+# Lock screen and window management
+
+[ksmserver]
+Lock Session=Meta+Semicolon
+
+[kwin]
+Window to Desktop 1=Meta+Shift+1
+Window to Desktop 2=Meta+Shift+2
+Window to Desktop 3=Meta+Shift+3
+Window to Desktop 4=Meta+Shift+4
+Window to Next Desktop=Meta+Shift+Period
+Window to Previous Desktop=Meta+Shift+Comma

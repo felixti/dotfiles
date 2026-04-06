@@ -30,6 +30,7 @@ CLAUDE.md
 .config/kwinrc
 .config/kwinrulesrc
 .config/plasmarc
+.config/kglobalshortcutsrc
 {{ end }}
 
 # File manager: Nemo configs (only when nemo is selected)
