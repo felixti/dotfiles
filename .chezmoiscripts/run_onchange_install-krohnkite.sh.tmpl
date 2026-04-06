@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Install Krohnkite KWin tiling script for KDE Plasma
+# Downloads from GitHub releases and installs via kpackagetool
+{{ if ne .de "kde" }}exit 0{{ end }}
+set -euo pipefail
+
+KROHNKITE_VERSION="0.9.9.2"
+KROHNKITE_URL="https://github.com/anametologin/krohnkite/releases/download/${KROHNKITE_VERSION}/krohnkite-${KROHNKITE_VERSION}.kwinscript"
+INSTALL_DIR="${HOME}/.local/share/kwin/scripts/krohnkite"
+
+# Check if already installed with correct version
+if [[ -f "${INSTALL_DIR}/metadata.json" ]]; then
+    INSTALLED_VERSION=$(grep -o '"Version": "[^"]*"' "${INSTALL_DIR}/metadata.json" | cut -d'"' -f4 || true)
+    if [[ "${INSTALLED_VERSION}" == "${KROHNKITE_VERSION}" ]]; then
+        echo "Krohnkite ${KROHNKITE_VERSION} already installed"
+        exit 0
+    fi
+    echo "Updating Krohnkite from ${INSTALLED_VERSION} to ${KROHNKITE_VERSION}..."
+else
+    echo "Installing Krohnkite ${KROHNKITE_VERSION}..."
+fi
+
+# Detect Plasma version and kpackagetool
+if command -v kpackagetool6 &>/dev/null; then
+    KPACKAGE="kpackagetool6"
+elif command -v kpackagetool5 &>/dev/null; then
+    KPACKAGE="kpackagetool5"
+else
+    echo "Error: kpackagetool not found (tried kpackagetool6 and kpackagetool5)"
+    exit 1
+fi
+
+# Create temp directory for download
+TMPDIR=$(mktemp -d)
+trap "rm -rf ${TMPDIR}" EXIT
+
+# Download the kwinscript
+echo "Downloading from ${KROHNKITE_URL}..."
+if command -v curl &>/dev/null; then
+    curl -fsL -o "${TMPDIR}/krohnkite.kwinscript" "${KROHNKITE_URL}"
+elif command -v wget &>/dev/null; then
+    wget -q -O "${TMPDIR}/krohnkite.kwinscript" "${KROHNKITE_URL}"
+else
+    echo "Error: curl or wget required for download"
+    exit 1
+fi
+
+# Remove existing installation if present
+if [[ -d "${INSTALL_DIR}" ]]; then
+    echo "Removing existing Krohnkite installation..."
+    rm -rf "${INSTALL_DIR}"
+fi
+
+# Install the new version
+echo "Installing with ${KPACKAGE}..."
+${KPACKAGE} --install "${TMPDIR}/krohnkite.kwinscript" --global 2>/dev/null || \
+${KPACKAGE} --install "${TMPDIR}/krohnkite.kwinscript"
+
+echo "Krohnkite ${KROHNKITE_VERSION} installed successfully"
+echo ""
+echo "Note: Enable Krohnkite in System Settings → Window Management → KWin Scripts"
+echo "      Then restart your session or run: kwin_x11 --replace & (X11) or kwin_wayland --replace & (Wayland)"

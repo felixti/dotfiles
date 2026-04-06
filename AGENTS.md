@@ -94,6 +94,9 @@ Pinned in `.chezmoiexternal.toml`:
 - **antidote** `v1.9.8` — zsh plugin manager
 - **tpm** `v3.1.0` — tmux plugin manager
 
+Installed via `run_onchange_` scripts (not git repos):
+- **Krohnkite** `0.9.9.2` — KWin tiling script (KDE only), installed to `~/.local/share/kwin/scripts/`
+
 ## How To Make Changes
 
 ### Adding a new CLI tool
@@ -163,7 +166,8 @@ ujust update                                    # update base OS first
 sh -c "$(curl -fsLS get.chezmoi.io)"           # install chezmoi
 chezmoi init --apply gh:felixti/dotfiles       # select: fedora-atomic, kde, yazi
 ```
-Manual step after: enable Krohnkite in System Settings → KWin Scripts.
+Krohnkite tiling script auto-installs via `run_onchange_install-krohnkite.sh.tmpl`.
+Manual step after: enable Krohnkite in System Settings → Window Management → KWin Scripts.
 
 ### CachyOS Hyprland (arch + hyprland)
 ```bash
